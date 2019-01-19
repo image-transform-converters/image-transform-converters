@@ -1,0 +1,96 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+  <parent>
+  	<groupId>org.scijava</groupId>
+  	<artifactId>pom-scijava</artifactId>
+  	<version>24.0.0</version>
+  </parent>
+
+  <artifactId>image-transform-converters</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+
+	<name>Image transform converters</name>
+	<description>A collection of tools for converting between spatial
+        transforms of various parametrizations / formats </description>
+    <url>https://github.com/image-transform-converters</url>
+	<inceptionYear>2019</inceptionYear>
+	<organization>
+		<name>image-transform-converters</name>
+		<url>https://fiji.sc/</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>Simplified BSD License</name>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+  <repositories>
+        <repository>
+            <id>imagej.public</id>
+            <url>https://maven.imagej.net/content/groups/public</url>
+      </repository>
+  </repositories>
+
+	<developers>
+		<developer>
+			<id>bogovicj</id>
+			<name>John Bogovic</name>
+			<url>http://imagej.net/User:Bogovic</url>
+			<roles>
+				<role>founder</role>
+				<role>lead</role>
+				<role>developer</role>
+				<role>debugger</role>
+				<role>reviewer</role>
+				<role>support</role>
+				<role>maintainer</role>
+			</roles>
+		</developer>
+	</developers>
+
+    <contributors>
+		<contributor>
+			<name>Curtis Rueden</name>
+			<url>http://imagej.net/User:Rueden</url>
+			<properties><id>ctrueden</id></properties>
+		</contributor>
+    </contributors>
+
+	<mailingLists>
+		<mailingList>
+			<name>ImageJ Forum</name>
+			<archive>http://forum.imagej.net/</archive>
+		</mailingList>
+	</mailingLists>
+
+	<scm>
+		<connection>scm:git:git://github.com/image-transform-converters/image-transform-converters</connection>
+		<developerConnection>scm:git:git@github.com:image-transform-converters/image-transform-converters</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/image-transform-converters/image-transform-converters</url>
+	</scm>
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/image-transform-converters/image-transform-converters/issues</url>
+	</issueManagement>
+
+	<ciManagement>
+		<system>Travis CI</system>
+	</ciManagement>
+
+	<properties>
+		<license.licenseName>bsd_2</license.licenseName>
+		<license.copyrightOwners>John Bogovic</license.copyrightOwners>
+		<license.projectName>image-transform-converters</license.projectName>
+	</properties>
+	
+  <dependencies>
+    <dependency>
+        <groupId>net.imglib2</groupId>
+        <artifactId>imglib2-realtransform</artifactId>
+    </dependency>
+  </dependencies>
+</project>
