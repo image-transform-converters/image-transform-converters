@@ -27,6 +27,15 @@
 		</license>
 	</licenses>
 
+	<distributionManagement>
+		<repository>
+			<id>bintray-image-transform-converters-image-transform-converters</id>
+			<name>image-transform-converters-image-transform-converters</name>
+			<url>https://api.bintray.com/maven/image-transform-converters/image-transform-converters/[PACKAGE_NAME]/;publish=1</url>
+		</repository>
+	</distributionManagement>
+
+
   <repositories>
         <repository>
             <id>imagej.public</id>
