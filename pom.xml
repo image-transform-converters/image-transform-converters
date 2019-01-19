@@ -18,7 +18,7 @@
 	<inceptionYear>2019</inceptionYear>
 	<organization>
 		<name>image-transform-converters</name>
-		<url>https://fiji.sc/</url>
+		<url>https://github.com/image-transform-converters</url>
 	</organization>
 	<licenses>
 		<license>
@@ -33,31 +33,6 @@
             <url>https://maven.imagej.net/content/groups/public</url>
       </repository>
   </repositories>
-
-	<developers>
-		<developer>
-			<id>bogovicj</id>
-			<name>John Bogovic</name>
-			<url>http://imagej.net/User:Bogovic</url>
-			<roles>
-				<role>founder</role>
-				<role>lead</role>
-				<role>developer</role>
-				<role>debugger</role>
-				<role>reviewer</role>
-				<role>support</role>
-				<role>maintainer</role>
-			</roles>
-		</developer>
-	</developers>
-
-    <contributors>
-		<contributor>
-			<name>Curtis Rueden</name>
-			<url>http://imagej.net/User:Rueden</url>
-			<properties><id>ctrueden</id></properties>
-		</contributor>
-    </contributors>
 
 	<mailingLists>
 		<mailingList>
@@ -77,14 +52,12 @@
 		<url>https://github.com/image-transform-converters/image-transform-converters/issues</url>
 	</issueManagement>
 
-	<ciManagement>
-		<system>Travis CI</system>
-	</ciManagement>
-
 	<properties>
 		<license.licenseName>bsd_2</license.licenseName>
 		<license.copyrightOwners>John Bogovic</license.copyrightOwners>
 		<license.projectName>image-transform-converters</license.projectName>
+
+        <enforcer.skip>true</enforcer.skip>
 	</properties>
 	
   <dependencies>
