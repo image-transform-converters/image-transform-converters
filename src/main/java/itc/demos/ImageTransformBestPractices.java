@@ -1,19 +1,18 @@
 package itc.demos;
 
 import bdv.util.BdvFunctions;
+import bdv.util.BdvOptions;
 import ij.IJ;
 import ij.ImagePlus;
-import net.imglib2.FinalInterval;
-import net.imglib2.Interval;
-import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.RealRandomAccessible;
+import net.imagej.Dataset;
+import net.imagej.ImgPlus;
+import net.imagej.axis.Axis;
+import net.imglib2.*;
 import net.imglib2.img.Img;
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.interpolation.randomaccess.ClampingNLinearInterpolatorFactory;
 import net.imglib2.interpolation.randomaccess.NLinearInterpolatorFactory;
-import net.imglib2.realtransform.AffineTransform3D;
-import net.imglib2.realtransform.InvertibleRealTransform;
-import net.imglib2.realtransform.InvertibleRealTransformSequence;
-import net.imglib2.realtransform.RealViews;
+import net.imglib2.realtransform.*;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
@@ -26,29 +25,35 @@ import net.imglib2.view.Views;
  */
 public class ImageTransformBestPractices {
 
-	public static void main(String[] args)
+	public static < R extends RealType< R > & NativeType< R > > void  main(String[] args)
 	{
 		// Load a calibrated image
 		ImagePlus imp = loadMrAndCalibrate();
 
-		double[] inputSpacing = new double[]{ 800, 800, 2200 };
-		double[] outputSpacing = new double[]{ 400, 400, 400 };
+		RandomAccessibleInterval< R > imgpixel = ImageJFunctions.wrapReal( imp );
 
-		Img<UnsignedByteType> imgpixel = ImageJFunctions.wrapByte( imp );
-		RealRandomAccessible<UnsignedByteType> imgPhysical = wrapAndInterpolateToPhysicalSpace( 
+		double[] inputSpacing = new double[]{ 800, 800, 2200 };
+		RealRandomAccessible< R > imgPhysical = wrapAndInterpolateToPhysicalSpace(
 				imgpixel,
-				inputSpacing );  // TODO grab calibration from imp
-		
+				inputSpacing );
+
+
 		AffineTransform3D shearingTransform = new AffineTransform3D();
 		shearingTransform.set( 
 				0.8, 0.1, 0.1, 0,
 				0.1, 0.8, 0.1, 0,
 				0.1, 0.1, 0.8, 0 );
-		// 
-		RealRandomAccessible<UnsignedByteType> result = transformAndRender( 
+
+
+		// You would do this for saving
+		double[] outputSpacing = new double[]{ 400, 400, 400 };
+		RealRandomAccessible<R> resultPixel = transformAndRender(
 				imgPhysical, shearingTransform, outputSpacing );
+
 				
-		BdvFunctions.show( result, getOutputInterval(imgpixel, inputSpacing, outputSpacing), "transformed real interval pixel space");
+		BdvFunctions.show( resultPixel, getOutputInterval(imgpixel, inputSpacing, outputSpacing), "transformed real interval pixel space");
+
+
 	}
 	
 	public static Interval getOutputInterval( Interval intervalIn, 
@@ -61,7 +66,8 @@ public class ImageTransformBestPractices {
 				(long)Math.round( intervalIn.dimension(2) * spacingin[ 2 ] / spacingout[ 2 ]));
 	}
 	
-	public static <T extends RealType<T> & NativeType<T>> RealRandomAccessible<T> transformAndRender(
+	public static <T extends RealType<T> & NativeType<T>> RealRandomAccessible<T>
+	transformAndRender(
 			RealRandomAccessible<T> imgPhysical,
 			InvertibleRealTransform transform,
 			double[] outputPixelSpacing )
@@ -74,7 +80,7 @@ public class ImageTransformBestPractices {
 		// in this particular case we *could* concatenate the affines,
 		// but in general we need a sequence like this
 		InvertibleRealTransformSequence totalTransform = new InvertibleRealTransformSequence();
-		totalTransform.add(transform);
+		totalTransform.add( transform );
 		totalTransform.add( outputPixelToPhysical.inverse() ); // TODO explain why the inverse
 
 		return RealViews.transform( imgPhysical, totalTransform );
@@ -82,28 +88,55 @@ public class ImageTransformBestPractices {
 	
 	public static ImagePlus loadMrAndCalibrate()
 	{
-		// sadly this image
 		ImagePlus imp = IJ.openImage("http://imagej.nih.gov/ij/images/mri-stack.zip");
-		// in microns
 		imp.getCalibration().pixelWidth = 800;
 		imp.getCalibration().pixelHeight = 800;
 		imp.getCalibration().pixelDepth = 2200;
+		imp.getCalibration().setUnit( "micrometer" );
 		return imp;
 	}
 	
-	public static <T extends RealType<T> & NativeType<T>> RealRandomAccessible<T> wrapAndInterpolateToPhysicalSpace( 
+	public static <T extends RealType<T> & NativeType<T>> RealRandomAccessible<T>
+		wrapAndInterpolateToPhysicalSpace(
 			final RandomAccessibleInterval<T> imgPixelSpace,
 			double[] pixelSpacing )
 	{
 		// get the calibration and build a transform from pixel to physical units
-		AffineTransform3D pixelToPhysical = new AffineTransform3D();
-		for( int i = 0; i < 3; i++ )
-			pixelToPhysical.set( pixelSpacing[ i ], i, i );
+		final Scale scale3D = new Scale( pixelSpacing );
+
+//		AffineTransform3D pixelToPhysical = new AffineTransform3D();
+//		for( int i = 0; i < 3; i++ )
+//			pixelToPhysical.set( pixelSpacing[ i ], i, i ); //
 
 		// 
 		return RealViews.affine( 
-				Views.interpolate( Views.extendZero( imgPixelSpace ), new NLinearInterpolatorFactory<>()), 
-				pixelToPhysical );
+				Views.interpolate(
+						Views.extendZero( imgPixelSpace ),
+						new ClampingNLinearInterpolatorFactory<>()),
+				scale3D );
+	}
+
+
+
+	public static <T extends RealType<T> & NativeType<T>> RealRandomAccessible<T>
+	wrapAndInterpolateToPhysicalSpace(
+			final RandomAccessibleInterval<T> imgPixelSpace,
+			double[] pixelSpacing,
+			double[] offset )
+	{
+		// get the calibration and build a transform from pixel to physical units
+		final Scale scale3D = new Scale( pixelSpacing );
+
+//		AffineTransform3D pixelToPhysical = new AffineTransform3D();
+//		for( int i = 0; i < 3; i++ )
+//			pixelToPhysical.set( pixelSpacing[ i ], i, i ); //
+
+		//
+		return RealViews.affine(
+				Views.interpolate(
+						Views.extendZero( imgPixelSpace ),
+						new ClampingNLinearInterpolatorFactory<>()),
+				scale3D );
 	}
 
 }
