@@ -86,5 +86,14 @@
 		  <version>2.74.1</version>
 		  <scope>test</scope>
 	  </dependency>
+	  <dependency>
+	  	<groupId>net.imglib2</groupId>
+	  	<artifactId>imglib2-ij</artifactId>
+	  </dependency>
+	  <dependency>
+  		<groupId>sc.fiji</groupId>
+  		<artifactId>bigdataviewer-vistools</artifactId>
+  		<version>1.0.0-beta-11</version>
+  	  </dependency>
   </dependencies>
 </project>
