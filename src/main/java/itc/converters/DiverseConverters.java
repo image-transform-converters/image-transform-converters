@@ -144,7 +144,7 @@ public abstract class DiverseConverters
 	 */
 	public static String affineTransform3DToElastixAffine3DString(
 			AffineTransform3D affineTransform3D,
-			double voxelSizeInMillimeter)
+			double voxelSizeInMillimeter )
 	{
 
 		String out = "";
