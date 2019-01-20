@@ -6,5 +6,5 @@ public interface ImageTransformConverterB< I, O >
 
 	Class inputType();
 
-	Class outputType(); 
+	Class outputType();
 }
