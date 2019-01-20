@@ -19,7 +19,7 @@ public class BdvAffineExample01
 		// What is actually the good default to define an image in imglib2?
 		// Maybe, as John suggested, it should be a RealRandomAccessible,
 		// with the convention that it has isotropic coordinate axes (of a given unit)
-		
+
 		final RandomAccessibleInterval< BitType > raiOriginal = createInputImage( 100, 100, 100 );
 
 		RealRandomAccessible< BitType > rraOriginal = Views.interpolate(
@@ -33,8 +33,6 @@ public class BdvAffineExample01
 
 		final RealRandomAccessible< BitType > translated =
 				RealViews.transform( rraOriginal, translationTransform );
-
-
 
 
 	}

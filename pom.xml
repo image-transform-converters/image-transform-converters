@@ -86,5 +86,9 @@
 		  <version>2.74.1</version>
 		  <scope>test</scope>
 	  </dependency>
+	  <dependency>
+		  <groupId>sc.fiji</groupId>
+		  <artifactId>bigdataviewer-vistools</artifactId>
+	  </dependency>
   </dependencies>
 </project>
