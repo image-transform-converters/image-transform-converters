@@ -1,4 +1,4 @@
-package itc;
+package itc.physicalimg;
 
 import net.imglib2.RealInterval;
 import net.imglib2.RealRandomAccessible;
