@@ -1,15 +1,15 @@
 package itc.demos;
 
 import bdv.util.BdvFunctions;
+import bdv.util.BdvOptions;
+import bdv.util.BdvStackSource;
 import itc.physicalimg.PhysicalImg;
-import itc.physicalimg.PhysicalImgFromDiscrete;
+import itc.physicalimg.PhysicalImgBuilder;
+import itc.utilities.CopyUtils;
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.gauss3.Gauss3;
 import net.imglib2.img.array.ArrayImgs;
-import net.imglib2.realtransform.AffineTransform3D;
-import net.imglib2.type.NativeType;
-import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.view.Views;
 
@@ -19,28 +19,32 @@ public class PhysicalImgGaussExample
 {
 	public static final double[] ONE_MICROMETER_3D = { 1.0, 1.0, 1.0 };
 
-	public static < T extends RealType< T > & NativeType< T > > void main( String[] args )
+	public static void main( String[] args )
 	{
-		final RandomAccessibleInterval< IntType > ints = ArrayImgs.ints( 100, 100, 10 );
+		final RandomAccessibleInterval< IntType > ints = ArrayImgs.ints( 100, 100, 20 );
 		final Cursor< IntType > cursor = Views.iterable( ints ).cursor();
 		final Random random = new Random();
 		while (cursor.hasNext() ) cursor.next().set( random.nextInt( 65535 ) );
 
-		final PhysicalImgFromDiscrete< T > img = new PhysicalImgFromDiscrete(
-				ints,
-				new AffineTransform3D(),
-				PhysicalImg.MICROMETER );
+		PhysicalImgBuilder<IntType> builder = new PhysicalImgBuilder<>( ints )
+				.spacing( ONE_MICROMETER_3D )
+				.unit( PhysicalImg.MICROMETER );
 
-		BdvFunctions.show( img.raiView(), "input" );
+		final PhysicalImg< IntType > img = builder.wrap( ints );
 
-		final PhysicalImg< T > gauss = img.copy( ONE_MICROMETER_3D );
+		BdvStackSource<IntType> bdv = BdvFunctions.show( img.raiView(), "input" );
 
+		final PhysicalImg< IntType > gauss = builder.wrap( CopyUtils.copyAsArrayImg( img.raiView( 1, 1, 1)));
+
+		
 		Gauss3.gauss(
-				new double[]{3.0,3.0,3.0},
-				img.raView( ONE_MICROMETER_3D ),
+				gauss.getInPixelUnits( 3.0, 3.0, 3.0),
+				img.raView( 1, 1, 1 ),
 				gauss.getWrappedRAI() // Here one has to know that the wrappedRAI has the correction spacing
 		);
-		BdvFunctions.show( gauss.raiView(), "gauss" );
+		BdvFunctions.show( gauss.raiView(), "gauss", BdvOptions.options().addTo(bdv) );
+		
+		
 
 	}
 }

@@ -4,8 +4,16 @@ import net.imglib2.FinalInterval;
 import net.imglib2.FinalRealInterval;
 import net.imglib2.Interval;
 import net.imglib2.RealInterval;
+import net.imglib2.realtransform.AffineGet;
 import net.imglib2.realtransform.RealTransform;
+import net.imglib2.realtransform.RealViewsSimplifyUtils;
+import net.imglib2.realtransform.Scale;
+import net.imglib2.realtransform.Scale2D;
 import net.imglib2.realtransform.Scale3D;
+import net.imglib2.realtransform.ScaleAndTranslation;
+import net.imglib2.realtransform.Translation;
+import net.imglib2.realtransform.Translation2D;
+import net.imglib2.realtransform.Translation3D;
 
 import java.util.stream.DoubleStream;
 
@@ -105,5 +113,76 @@ public class TransformUtils {
 		assert spacing.length == 3: "Input dimensions do not match or are not 3.";
 
 		return new Scale3D( DoubleStream.of( spacing ).map( s -> 1.0 / s ).toArray() );
+	}
+
+	/**
+	 * Copied from {@link RealViewsSimplifyUtils} because it's private
+	 * 
+	 * @param affineGet a simplified affine
+	 * @return
+	 */
+	public static AffineGet simplifyAffineGet( final AffineGet affineGet )
+	{
+		final int n = affineGet.numDimensions();
+
+		if ( RealViewsSimplifyUtils.isExlusiveTranslation( affineGet ) )
+		{
+			final double[] translations = new double[ n ];
+
+			for ( int d = 0; d < n; d++ )
+			{
+				translations[ d ] = affineGet.get( d, n );
+			}
+
+			if ( n == 2 )
+			{
+				return new Translation2D( translations );
+			}
+			else if ( n == 3 )
+			{
+				return new Translation3D( translations );
+			}
+			else
+			{
+				return new Translation( translations );
+			}
+		}
+		else if ( RealViewsSimplifyUtils.isExclusiveScale( affineGet ) )
+		{
+
+			final double[] scalings = new double[ n ];
+
+			for ( int d = 0; d < n; d++ )
+			{
+				scalings[ d ] = affineGet.get( d, d );
+			}
+
+			if ( n == 2 )
+			{
+				return new Scale2D( scalings );
+			}
+			else if ( n == 3 )
+			{
+				return new Scale3D( scalings );
+			}
+			else
+			{
+				return new Scale( scalings );
+			}
+		}
+		else if ( RealViewsSimplifyUtils.isExclusiveScaleAndTranslation( affineGet ) )
+		{
+			final double[] s = new double[ n ];
+			final double[] t = new double[ n ];
+			for ( int d = 0; d < n; d++ )
+			{
+				t[ d ] = affineGet.get( d, n );
+				s[ d ] = affineGet.get( d, d );
+			}
+
+			return new ScaleAndTranslation( t, s );
+
+		}
+		return ( AffineGet ) affineGet.copy();
 	}
 }

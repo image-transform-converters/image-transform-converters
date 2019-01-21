@@ -3,6 +3,8 @@ package itc.physicalimg;
 import itc.utilities.CopyUtils;
 import itc.utilities.TransformUtils;
 import net.imglib2.*;
+import net.imglib2.interpolation.InterpolatorFactory;
+import net.imglib2.realtransform.AffineGet;
 import net.imglib2.realtransform.RealViews;
 import net.imglib2.realtransform.Scale;
 import net.imglib2.realtransform.Scale3D;
@@ -18,44 +20,90 @@ import net.imglib2.view.Views;
  * in specified physical units.
  *
  */
-public class PhysicalImg < T extends RealType< T > & NativeType< T > >
+public class PhysicalImg < T extends RealType< T > & NativeType< T > > implements RealRandomAccessible<T>
 {
 	public static final String MICROMETER = "micrometer";
 
 	private final RandomAccessibleInterval<T> wrappedRAI;
 	private final RealRandomAccessible<T> rra;
 	private final RealInterval interval;
+	private final AffineGet pixelToPhysical;
 	private final String unit;
+	
+	private final PhysicalImgBuilder<T> builder; // builder used to create this PhysicalImage, if it exists
 
 	public PhysicalImg( RealRandomAccessible<T> rra, RealInterval interval )
 	{
-		this( rra, interval, MICROMETER, null );
+		this( rra, interval, null, MICROMETER, null );
 	}
 
-	public PhysicalImg( RealRandomAccessible<T> rra,
-						RealInterval interval,
-						String unit,
-						RandomAccessibleInterval<T> wrappedRAI )
+	public PhysicalImg( RealRandomAccessible<T> rra, RealInterval interval, String unit )
+	{
+		this( rra, interval, null, unit, null );
+	}
+
+	public PhysicalImg( final RealRandomAccessible<T> rra,
+						final RealInterval interval,
+						final AffineGet pixelToPhysical,
+						final String unit,
+						final RandomAccessibleInterval<T> wrappedRAI,
+						final PhysicalImgBuilder<T> builder )
 	{
 		this.rra = rra;
 		this.interval = interval;
+		this.pixelToPhysical = pixelToPhysical;
 		this.unit = unit;
 		this.wrappedRAI = wrappedRAI;
+		this.builder = builder;
+	}
+
+	public PhysicalImg( final RealRandomAccessible<T> rra,
+						final RealInterval interval,
+						final AffineGet pixelToPhysical,
+						final String unit,
+						final RandomAccessibleInterval<T> wrappedRAI )
+	{
+		this.rra = rra;
+		this.interval = interval;
+		this.pixelToPhysical = pixelToPhysical;
+		this.unit = unit;
+		this.wrappedRAI = wrappedRAI;
+		this.builder = null;
 	}
 
 	public RandomAccessibleInterval< T > raiView( )
 	{
 		return raiView( 1.0, 1.0, 1.0 );
 	}
+	
+	/**
+	 * Transform a point or scale in physical units to the discrete pixel units.
+	 * 
+	 * Useful when you need to write 
+	 * 
+	 * @param physicalPoint the physical point
+	 * @return the point at the scale of pixels
+	 */
+	public double[] getInPixelUnits( double... physicalPoint )
+	{
+		// TODO this is wrong in general, 
+		// but is fine for the tests i have right now
+		// replace with detecting scale VERY SOON  -JB
+		AffineGet scale = pixelToPhysical;
+
+		double[] result = new double[ physicalPoint.length ];
+		scale.applyInverse( result, physicalPoint );
+		return result;
+	}
 
 	public RandomAccessibleInterval< T > raiView( double... spacing )
 	{
 		assert spacing.length == 3: "Input dimensions do not match or are not 3.";
 
-		final FinalInterval interval = interval( spacing );
+		final FinalInterval pixelInterval = interval( spacing );
 		final RandomAccessible< T > ra = raView( spacing );
 
-		return Views.interval( ra, interval );
+		return Views.interval( ra, pixelInterval );
 	}
 
 //	public RandomAccessibleInterval< T > emptyArrayImg( double... spacing )
@@ -81,6 +129,13 @@ public class PhysicalImg < T extends RealType< T > & NativeType< T > >
 		return pixelInterval;
 	}
 
+	/**
+	 * Returns a {@link RandomAccessible} in pixel space, when sampling this
+	 * PhyiscalImg at the provided spacing.
+	 *  
+	 * @param spacing the spacing at which the output should be sampled
+	 * @return an image in pixel space
+	 */
 	public RandomAccessible< T > raView( double... spacing  )
 	{
 		assert spacing.length == 3: "Input dimensions do not match or are not 3.";
@@ -94,12 +149,17 @@ public class PhysicalImg < T extends RealType< T > & NativeType< T > >
 
 	public PhysicalImg< T > copy( double... spacing )
 	{
-		final PhysicalImgFromDiscrete< T > copy = new PhysicalImgFromDiscrete<>(
-				CopyUtils.copyAsArrayImg( raiView( spacing ) ),
-				new Scale( spacing ),
-				unit );
-
-		return copy;
+		RandomAccessibleInterval<T> rai = CopyUtils.copyAsArrayImg( raiView( spacing ) );
+		
+		if( builder != null )
+			return builder.wrap(rai);
+	
+		// this is right if its correct to concatenate
+		return new PhysicalImgBuilder<>( rai )
+				.pixelToPhysical(pixelToPhysical)
+				.unit( unit )
+				.spacing( spacing )
+				.wrap();
 	}
 
 	public RealRandomAccessible< T > getRRA()
@@ -120,5 +180,20 @@ public class PhysicalImg < T extends RealType< T > & NativeType< T > >
 	public RandomAccessibleInterval< T > getWrappedRAI()
 	{
 		return wrappedRAI;
+	}
+
+	@Override
+	public int numDimensions() {
+		return rra.numDimensions();
+	}
+
+	@Override
+	public RealRandomAccess<T> realRandomAccess() {
+		return rra.realRandomAccess();
+	}
+
+	@Override
+	public RealRandomAccess<T> realRandomAccess(RealInterval interval) {
+		return rra.realRandomAccess( interval );
 	}
 }
