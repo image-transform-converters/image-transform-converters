@@ -39,7 +39,7 @@ public class PhysicalImgFromDiscrete < T extends RealType< T > & NativeType< T >
 			final InterpolatorFactory<T, RandomAccessible<T>> interpolatorFactory,
 			final String unit)
 	{
-		super( RealViews.transform( Views.interpolate(rai, interpolatorFactory), pixelToPhysical ),
+		super( RealViews.transform( Views.interpolate( Views.extendZero(  rai ), interpolatorFactory), pixelToPhysical ) ,
 				TransformUtils.transformRealInterval( rai, pixelToPhysical ),
 				unit);
 
@@ -54,7 +54,7 @@ public class PhysicalImgFromDiscrete < T extends RealType< T > & NativeType< T >
 			final InterpolatorFactory<T, RandomAccessible<T>> interpolatorFactory,
 			final String unit)
 	{
-		super(  RealViews.transform( Views.interpolate(ra, interpolatorFactory), pixelToPhysical ),
+		super(  RealViews.transform( Views.interpolate( ra, interpolatorFactory), pixelToPhysical ),
 				TransformUtils.transformRealInterval( interval, pixelToPhysical ),
 				unit);
 

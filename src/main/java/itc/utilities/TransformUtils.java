@@ -8,12 +8,12 @@ import net.imglib2.realtransform.RealTransform;
 
 public class TransformUtils {
 
-	public static FinalRealInterval transformRealInterval( final RealInterval interval, final RealTransform xfm ) {
+	public static FinalRealInterval transformRealInterval(
+			final RealInterval interval,
+			final RealTransform xfm ) {
 
 		int nd = interval.numDimensions();
 		double[] pt = new double[nd];
-		double[] ptxfm = new double[nd];
-
 		double[] min = new double[nd];
 		double[] max = new double[nd];
 
@@ -21,19 +21,21 @@ public class TransformUtils {
 		for (int d = 0; d < nd; d++)
 			pt[d] = interval.realMin(d);
 
-		xfm.apply(pt, ptxfm);
+		xfm.apply(pt, min);
 
 		// transform max
 		for (int d = 0; d < nd; d++) {
 			pt[d] = interval.realMax(d);
 		}
 
-		xfm.apply(pt, ptxfm);
+		xfm.apply(pt, max);
 
 		return new FinalRealInterval(min, max);
 	}
 
-	public static FinalInterval transformRealIntervalExpand( final RealInterval interval, final RealTransform xfm ) {
+	public static FinalInterval transformRealIntervalExpand(
+			final RealInterval interval,
+			final RealTransform xfm ) {
 		
 		int nd = interval.numDimensions();
 		FinalRealInterval realTransformedInterval = transformRealInterval(interval, xfm );

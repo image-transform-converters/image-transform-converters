@@ -51,23 +51,27 @@ public class PhysicalImg < T extends RealType< T > & NativeType< T > >
 		return Views.interval( ra, interval );
 	}
 
-	public FinalInterval interval( double[] resolution )
+	public FinalInterval interval( double... resolution )
 	{
-		final Scale scale = new Scale( DoubleStream.of( resolution ).map( r -> 1.0 / r ).toArray() );
-		return TransformUtils.transformRealIntervalExpand( this.interval, scale );
+		final Scale scale = getScale( resolution );
+		final FinalInterval interval = TransformUtils.transformRealIntervalExpand( this.interval, scale );
+		return interval;
+	}
+
+	public Scale getScale( double... resolution )
+	{
+		return new Scale( DoubleStream.of( resolution ).map( r -> 1.0 / r ).toArray() );
 	}
 
 	public RandomAccessible< T > raView( double... resolution  )
 	{
-		final Scale scale = new Scale( DoubleStream.of( resolution ).map( r -> 1.0 / r ).toArray() );
+		final Scale scale = getScale( resolution );
 		final RealRandomAccessible< T > scaledRRA = RealViews.transform( rra, scale );
 		final RandomAccessibleOnRealRandomAccessible< T > raster = Views.raster( scaledRRA );
 
 		return raster;
 	}
 
-	// TODO: version of choice of interpolation (or we may have to keep track
-	// of interpolation as an (nullable) field...)
 	public PhysicalImg< T > copy( double... resolution )
 	{
 		final PhysicalImgFromDiscrete< T > copy = new PhysicalImgFromDiscrete<>(
