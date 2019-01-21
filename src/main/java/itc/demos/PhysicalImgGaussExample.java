@@ -31,12 +31,14 @@ public class PhysicalImgGaussExample
 				new AffineTransform3D(),
 				PhysicalImg.MICROMETER );
 
-//		BdvFunctions.show( img.raiView( ONE_MICROMETER_3D ), "input" );
+		BdvFunctions.show( img.raiView( ONE_MICROMETER_3D ), "input" );
 
 		final PhysicalImg< T > gauss = img.copy( ONE_MICROMETER_3D );
 
-		// this does not work, I think because one cannot write into the raiView :-(
-		Gauss3.gauss( new double[]{3.0,3.0,3.0}, img.raView(), gauss.raiView( ONE_MICROMETER_3D ) );
+		Gauss3.gauss(
+				new double[]{3.0,3.0,3.0},
+				img.raView( ONE_MICROMETER_3D ),
+				gauss.getWrappedRAI() );
 
 		BdvFunctions.show( gauss.raiView( ONE_MICROMETER_3D ), "gauss" );
 

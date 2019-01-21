@@ -22,7 +22,6 @@ public class PhysicalImgFromDiscrete < T extends RealType< T > & NativeType< T >
 		extends PhysicalImg<T> {
 
 	private final AffineGet pixelToPhysical;
-	private final RandomAccessibleInterval<T> imageRaw;
 
 	public PhysicalImgFromDiscrete(
 			final RandomAccessibleInterval<T> rai,
@@ -41,9 +40,9 @@ public class PhysicalImgFromDiscrete < T extends RealType< T > & NativeType< T >
 	{
 		super( RealViews.transform( Views.interpolate( Views.extendZero(  rai ), interpolatorFactory), pixelToPhysical ) ,
 				TransformUtils.transformRealInterval( rai, pixelToPhysical ),
-				unit);
+				unit,
+				rai );
 
-		this.imageRaw = rai;
 		this.pixelToPhysical = pixelToPhysical;
 	}
 
@@ -56,9 +55,9 @@ public class PhysicalImgFromDiscrete < T extends RealType< T > & NativeType< T >
 	{
 		super(  RealViews.transform( Views.interpolate( ra, interpolatorFactory), pixelToPhysical ),
 				TransformUtils.transformRealInterval( interval, pixelToPhysical ),
-				unit);
+				unit,
+				Views.interval(ra, interval) );
 
-		this.imageRaw = Views.interval(ra, interval);
 		this.pixelToPhysical = pixelToPhysical;
 	}
 	

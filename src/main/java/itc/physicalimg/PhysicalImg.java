@@ -3,14 +3,11 @@ package itc.physicalimg;
 import itc.utilities.CopyUtils;
 import itc.utilities.TransformUtils;
 import net.imglib2.*;
-import net.imglib2.interpolation.randomaccess.ClampingNLinearInterpolatorFactory;
-import net.imglib2.realtransform.InverseRealTransform;
-import net.imglib2.realtransform.RealTransformRandomAccessible;
 import net.imglib2.realtransform.RealViews;
 import net.imglib2.realtransform.Scale;
+import net.imglib2.realtransform.Scale3D;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.view.IntervalView;
 import net.imglib2.view.RandomAccessibleOnRealRandomAccessible;
 import net.imglib2.view.Views;
 
@@ -27,56 +24,78 @@ public class PhysicalImg < T extends RealType< T > & NativeType< T > >
 {
 	public static final String MICROMETER = "micrometer";
 
+	private final RandomAccessibleInterval<T> wrappedRAI;
 	private final RealRandomAccessible<T> rra;
 	private final RealInterval interval;
 	private final String unit;
 
 	public PhysicalImg( RealRandomAccessible<T> rra, RealInterval interval )
 	{
-		this( rra, interval, MICROMETER);
+		this( rra, interval, MICROMETER, null );
 	}
 
-	public PhysicalImg( RealRandomAccessible<T> rra, RealInterval interval, String unit )
+	public PhysicalImg( RealRandomAccessible<T> rra,
+						RealInterval interval,
+						String unit,
+						RandomAccessibleInterval<T> wrappedRAI )
 	{
 		this.rra = rra;
 		this.interval = interval;
 		this.unit = unit;
+		this.wrappedRAI = wrappedRAI;
 	}
 
-	public RandomAccessibleInterval< T > raiView( double... resolution )
+	public RandomAccessibleInterval< T > raiView( double... spacing )
 	{
-		final FinalInterval interval = interval( resolution );
-		final RandomAccessible< T > ra = raView( resolution );
+		assert spacing.length == 3: "Input dimensions do not match or are not 3.";
+
+		final FinalInterval interval = interval( spacing );
+		final RandomAccessible< T > ra = raView( spacing );
 
 		return Views.interval( ra, interval );
 	}
 
-	public FinalInterval interval( double... resolution )
+//	public RandomAccessibleInterval< T > emptyArrayImg( double... spacing )
+//	{
+//		assert spacing.length == 3: "Input dimensions do not match or are not 3.";
+//
+//		final FinalInterval interval = interval( spacing );
+//
+//		final ArrayImg arrayImg = new ArrayImgFactory( rra.realRandomAccess().get() ).create( interval );
+//
+//		return arrayImg;
+//	}
+
+	private FinalInterval interval( double... spacing )
 	{
-		final Scale scale = getScale( resolution );
+		final Scale3D scale = getScaleTransform( spacing );
 		final FinalInterval interval = TransformUtils.transformRealIntervalExpand( this.interval, scale );
 		return interval;
 	}
 
-	public Scale getScale( double... resolution )
+	private Scale3D getScaleTransform( double... spacing )
 	{
-		return new Scale( DoubleStream.of( resolution ).map( r -> 1.0 / r ).toArray() );
+		assert spacing.length == 3: "Input dimensions do not match or are not 3.";
+
+		return new Scale3D( DoubleStream.of( spacing ).map( r -> 1.0 / r ).toArray() );
 	}
 
-	public RandomAccessible< T > raView( double... resolution  )
+	public RandomAccessible< T > raView( double... spacing  )
 	{
-		final Scale scale = getScale( resolution );
+		assert spacing.length == 3: "Input dimensions do not match or are not 3.";
+
+		final Scale3D scale = getScaleTransform( spacing );
 		final RealRandomAccessible< T > scaledRRA = RealViews.transform( rra, scale );
 		final RandomAccessibleOnRealRandomAccessible< T > raster = Views.raster( scaledRRA );
 
 		return raster;
 	}
 
-	public PhysicalImg< T > copy( double... resolution )
+	public PhysicalImg< T > copy( double... spacing )
 	{
 		final PhysicalImgFromDiscrete< T > copy = new PhysicalImgFromDiscrete<>(
-				CopyUtils.copyAsArrayImg( raiView( resolution ) ),
-				new Scale( resolution ),
+				CopyUtils.copyAsArrayImg( raiView( spacing ) ),
+				new Scale( spacing ),
 				unit );
 
 		return copy;
@@ -95,5 +114,10 @@ public class PhysicalImg < T extends RealType< T > & NativeType< T > >
 	public String getUnit()
 	{
 		return unit;
+	}
+
+	public RandomAccessibleInterval< T > getWrappedRAI()
+	{
+		return wrappedRAI;
 	}
 }
