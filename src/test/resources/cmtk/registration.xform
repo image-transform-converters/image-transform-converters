@@ -1,0 +1,13 @@
+! TYPEDSTREAM 2.4
+
+registration {
+	reference_study "F-antsFlip_lof.nii"
+	floating_study "images/20161102_32_C1_Scope_#1_C1_down.nii"
+	affine_xform {
+		xlate 87.33071156 182.1810159 20.92234549 
+		rotate 4.157699584 0.2867779162 -2.307915638 
+		scale 1.32380624 1.364033471 1.188885251 
+		shear 0.003397506823 0.001159744793 -0.02751253494 
+		center 337.1692884 142.3189841 103.5776545 
+	}
+}

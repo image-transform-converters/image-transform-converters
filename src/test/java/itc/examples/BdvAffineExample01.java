@@ -1,3 +1,4 @@
+package itc.examples;
 import bdv.util.BdvFunctions;
 import bdv.util.BdvHandle;
 import net.imglib2.Cursor;
