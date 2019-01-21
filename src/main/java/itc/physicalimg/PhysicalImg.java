@@ -11,8 +11,6 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.RandomAccessibleOnRealRandomAccessible;
 import net.imglib2.view.Views;
 
-import java.util.stream.DoubleStream;
-
 /**
  * A continuous image in a physical coordinate system.
  * 
@@ -45,6 +43,11 @@ public class PhysicalImg < T extends RealType< T > & NativeType< T > >
 		this.wrappedRAI = wrappedRAI;
 	}
 
+	public RandomAccessibleInterval< T > raiView( )
+	{
+		return raiView( 1.0, 1.0, 1.0 );
+	}
+
 	public RandomAccessibleInterval< T > raiView( double... spacing )
 	{
 		assert spacing.length == 3: "Input dimensions do not match or are not 3.";
@@ -68,23 +71,21 @@ public class PhysicalImg < T extends RealType< T > & NativeType< T > >
 
 	private FinalInterval interval( double... spacing )
 	{
-		final Scale3D scale = getScaleTransform( spacing );
-		final FinalInterval interval = TransformUtils.transformRealIntervalExpand( this.interval, scale );
-		return interval;
-	}
+		final Scale3D scale = TransformUtils.getPhysicalToPixelScaleTransform3D( spacing );
 
-	private Scale3D getScaleTransform( double... spacing )
-	{
-		assert spacing.length == 3: "Input dimensions do not match or are not 3.";
+		final FinalInterval pixelInterval =
+				TransformUtils.transformRealIntervalExpand(
+						this.interval,
+						scale );
 
-		return new Scale3D( DoubleStream.of( spacing ).map( r -> 1.0 / r ).toArray() );
+		return pixelInterval;
 	}
 
 	public RandomAccessible< T > raView( double... spacing  )
 	{
 		assert spacing.length == 3: "Input dimensions do not match or are not 3.";
 
-		final Scale3D scale = getScaleTransform( spacing );
+		final Scale3D scale = TransformUtils.getScaleTransform3D( spacing );
 		final RealRandomAccessible< T > scaledRRA = RealViews.transform( rra, scale );
 		final RandomAccessibleOnRealRandomAccessible< T > raster = Views.raster( scaledRRA );
 

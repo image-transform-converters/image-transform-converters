@@ -5,6 +5,9 @@ import net.imglib2.FinalRealInterval;
 import net.imglib2.Interval;
 import net.imglib2.RealInterval;
 import net.imglib2.realtransform.RealTransform;
+import net.imglib2.realtransform.Scale3D;
+
+import java.util.stream.DoubleStream;
 
 public class TransformUtils {
 
@@ -88,5 +91,19 @@ public class TransformUtils {
 		
 		for (int d = 0; d < src.length; d++)
 			dst[d] = (long) Math.ceil(src[d]);
+	}
+
+	public static Scale3D getScaleTransform3D( double... spacing )
+	{
+		assert spacing.length == 3: "Input dimensions do not match or are not 3.";
+
+		return new Scale3D( spacing );
+	}
+
+	public static Scale3D getPhysicalToPixelScaleTransform3D( double... spacing )
+	{
+		assert spacing.length == 3: "Input dimensions do not match or are not 3.";
+
+		return new Scale3D( DoubleStream.of( spacing ).map( s -> 1.0 / s ).toArray() );
 	}
 }

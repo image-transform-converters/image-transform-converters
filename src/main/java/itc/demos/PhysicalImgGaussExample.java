@@ -31,16 +31,16 @@ public class PhysicalImgGaussExample
 				new AffineTransform3D(),
 				PhysicalImg.MICROMETER );
 
-		BdvFunctions.show( img.raiView( ONE_MICROMETER_3D ), "input" );
+		BdvFunctions.show( img.raiView(), "input" );
 
 		final PhysicalImg< T > gauss = img.copy( ONE_MICROMETER_3D );
 
 		Gauss3.gauss(
 				new double[]{3.0,3.0,3.0},
 				img.raView( ONE_MICROMETER_3D ),
-				gauss.getWrappedRAI() );
-
-		BdvFunctions.show( gauss.raiView( ONE_MICROMETER_3D ), "gauss" );
+				gauss.getWrappedRAI() // Here one has to know that the wrappedRAI has the correction spacing
+		);
+		BdvFunctions.show( gauss.raiView(), "gauss" );
 
 	}
 }
