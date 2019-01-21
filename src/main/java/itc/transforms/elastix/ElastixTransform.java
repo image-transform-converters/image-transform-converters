@@ -46,7 +46,12 @@ public class ElastixTransform {
     public String ResultImageFormat;
     public String ResultImagePixelType;
     public Boolean CompressResultImage;
-
+    
+    /**
+     * Returns a String representation of the current ElastixTransform object
+     * Fit the normal Data representation in TransformParameters files provided by elastix
+     * @return String representation of the ElastixTransform object
+     */
     public String toString() {
         String str = "";
         Field[] fields = this.getClass().getFields();
@@ -87,7 +92,8 @@ public class ElastixTransform {
     }
 
     /**
-     * Returns An Elastix Transformation File (in temporary dir)
+     * Save the current ElastixTransform Object to the standard temporary directory
+     * @return TransformParameters file containing all the Elastix transform properties
      */
     public File toFile() {
         BufferedWriter writer = null;
@@ -110,7 +116,9 @@ public class ElastixTransform {
     }
 
     /**
-     * Returns An Elastix Transformation File to the specified path
+     * Save the current ElastixTransform Object to the specified path
+     * @param path
+     * @return TransformParameters file containing all the Elastix transform properties
      */
     public File save(String path) {
         BufferedWriter writer = null;
@@ -138,7 +146,6 @@ public class ElastixTransform {
      * @param f file generated from Elastix
      * @return ElastixTransform object, containing all properties from the file
      */
-
     public static ElastixTransform load(File f) throws IOException, UnsupportedOperationException {
 
         BufferedReader file = new BufferedReader(new FileReader(f));
@@ -156,7 +163,7 @@ public class ElastixTransform {
         assert m.group(1).equals("Transform");
 
         switch (m.group(2)) {
-            case "\"TranslationTransform\"":
+            case "\"TranslationTransform\"": case "\"SplineKernelTransform\"":
                 throw new UnsupportedOperationException();
             case "\"EulerTransform\"":
                 out = new ElastixEulerTransform();
@@ -195,7 +202,13 @@ public class ElastixTransform {
         return out;
     }
 
-    public static void fillField(ElastixTransform et, Field f, String s) {
+    /**
+     * Inner class for file to object conversion of ElaslixTransform objects
+     * @param et current object
+     * @param f field ot be filled
+     * @param s string representation of the object
+     */
+    static void fillField(ElastixTransform et, Field f, String s) {
         try {
             switch (f.getType().getSimpleName()) {
                 case "String":
@@ -253,6 +266,5 @@ public class ElastixTransform {
             e.printStackTrace();
         }
     }
-
 
 }
