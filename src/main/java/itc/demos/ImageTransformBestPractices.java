@@ -8,7 +8,9 @@ import net.imagej.Dataset;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axis;
 import net.imglib2.*;
+import net.imglib2.algorithm.gauss3.Gauss3;
 import net.imglib2.img.Img;
+import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.interpolation.randomaccess.ClampingNLinearInterpolatorFactory;
 import net.imglib2.interpolation.randomaccess.NLinearInterpolatorFactory;
@@ -37,12 +39,15 @@ public class ImageTransformBestPractices {
 				imgpixel,
 				inputSpacing );
 
+//		ImgPhysical imgPhysicalew =  imgPhysical.emptyCopy(0.1);
+//		Gauss3.gauss( 3.5, imgPhysical.copy(0.1), imgPhysicalNew.createRai(0.1) );
 
 		AffineTransform3D shearingTransform = new AffineTransform3D();
 		shearingTransform.set( 
 				0.8, 0.1, 0.1, 0,
 				0.1, 0.8, 0.1, 0,
 				0.1, 0.1, 0.8, 0 );
+
 
 
 		// You would do this for saving
