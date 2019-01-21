@@ -1,7 +1,9 @@
+package itc.transforms;
 import org.junit.Test;
 
 import itc.converters.AffineTransform3DToFlatString;
 import itc.converters.FlatStringToAffineTransform3D;
+import itc.testUtils.ChainConversions;
 import itc.transforms.AffineAsFlatString;
 import net.imglib2.realtransform.AffineTransform3D;
 
