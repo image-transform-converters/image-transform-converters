@@ -1,6 +1,8 @@
 package itc.transforms;
 
-public class ElastixEulerTransform3D
+import itc.transforms.elastix.ElastixTransform;
+
+public class ElastixEulerTransform3D extends ElastixTransform
 {
 	/**
 	 * Euler angles in rad, in order X, Y, Z
