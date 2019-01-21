@@ -1,7 +1,20 @@
 package itc.physicalimg;
 
-import net.imglib2.RealInterval;
-import net.imglib2.RealRandomAccessible;
+import itc.utilities.CopyUtils;
+import itc.utilities.TransformUtils;
+import net.imglib2.*;
+import net.imglib2.interpolation.randomaccess.ClampingNLinearInterpolatorFactory;
+import net.imglib2.realtransform.InverseRealTransform;
+import net.imglib2.realtransform.RealTransformRandomAccessible;
+import net.imglib2.realtransform.RealViews;
+import net.imglib2.realtransform.Scale;
+import net.imglib2.type.NativeType;
+import net.imglib2.type.numeric.RealType;
+import net.imglib2.view.IntervalView;
+import net.imglib2.view.RandomAccessibleOnRealRandomAccessible;
+import net.imglib2.view.Views;
+
+import java.util.stream.DoubleStream;
 
 /**
  * A continuous image in a physical coordinate system.
@@ -10,24 +23,73 @@ import net.imglib2.RealRandomAccessible;
  * in specified physical units.
  *
  */
-public class PhysicalImg<T>
+public class PhysicalImg < T extends RealType< T > & NativeType< T > >
 {
 	public static final String MICROMETER = "micrometer";
 
-	public final RealRandomAccessible<T> img;
-	public final RealInterval interval;
-	public final String unit;
+	private final RealRandomAccessible<T> rra;
+	private final RealInterval interval;
+	private final String unit;
 
-	public PhysicalImg( RealRandomAccessible<T> img, RealInterval interval )
+	public PhysicalImg( RealRandomAccessible<T> rra, RealInterval interval )
 	{
-		this( img, interval, MICROMETER);
+		this( rra, interval, MICROMETER);
 	}
 
-	public PhysicalImg( RealRandomAccessible<T> img, RealInterval interval, String unit )
+	public PhysicalImg( RealRandomAccessible<T> rra, RealInterval interval, String unit )
 	{
-		this.img = img;
+		this.rra = rra;
 		this.interval = interval;
 		this.unit = unit;
 	}
 
+	public RandomAccessibleInterval< T > raiView( double... resolution )
+	{
+		final FinalInterval interval = interval( resolution );
+		final RandomAccessible< T > ra = raView( resolution );
+
+		return Views.interval( ra, interval );
+	}
+
+	public FinalInterval interval( double[] resolution )
+	{
+		final Scale scale = new Scale( DoubleStream.of( resolution ).map( r -> 1.0 / r ).toArray() );
+		return TransformUtils.transformRealIntervalExpand( this.interval, scale );
+	}
+
+	public RandomAccessible< T > raView( double... resolution  )
+	{
+		final Scale scale = new Scale( DoubleStream.of( resolution ).map( r -> 1.0 / r ).toArray() );
+		final RealRandomAccessible< T > scaledRRA = RealViews.transform( rra, scale );
+		final RandomAccessibleOnRealRandomAccessible< T > raster = Views.raster( scaledRRA );
+
+		return raster;
+	}
+
+	// TODO: version of choice of interpolation (or we may have to keep track
+	// of interpolation as an (nullable) field...)
+	public PhysicalImg< T > copy( double... resolution )
+	{
+		final PhysicalImgFromDiscrete< T > copy = new PhysicalImgFromDiscrete<>(
+				CopyUtils.copyAsArrayImg( raiView( resolution ) ),
+				new Scale( resolution ),
+				unit );
+
+		return copy;
+	}
+
+	public RealRandomAccessible< T > getRRA()
+	{
+		return rra;
+	}
+
+	public RealInterval getInterval()
+	{
+		return interval;
+	}
+
+	public String getUnit()
+	{
+		return unit;
+	}
 }

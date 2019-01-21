@@ -5,7 +5,11 @@ import net.imglib2.Interval;
 import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.interpolation.InterpolatorFactory;
+import net.imglib2.interpolation.randomaccess.ClampingNLinearInterpolatorFactory;
 import net.imglib2.realtransform.AffineGet;
+import net.imglib2.realtransform.RealViews;
+import net.imglib2.type.NativeType;
+import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
 
 /**
@@ -14,10 +18,20 @@ import net.imglib2.view.Views;
  * {@link AffineGet} transformation from pixel to physical coordinates.
  * 
  */
-public class PhysicalImgFromDiscrete<T> extends PhysicalImg<T> {
+public class PhysicalImgFromDiscrete < T extends RealType< T > & NativeType< T > >
+		extends PhysicalImg<T> {
 
-	public final AffineGet pixelToPhysical;
-	public final RandomAccessibleInterval<T> imageRaw;
+	private final AffineGet pixelToPhysical;
+	private final RandomAccessibleInterval<T> imageRaw;
+
+	public PhysicalImgFromDiscrete(
+			final RandomAccessibleInterval<T> rai,
+			final AffineGet pixelToPhysical,
+			final String unit)
+	{
+		this( rai, pixelToPhysical, new ClampingNLinearInterpolatorFactory(), unit );
+	}
+
 
 	public PhysicalImgFromDiscrete(
 			final RandomAccessibleInterval<T> rai,
@@ -25,8 +39,8 @@ public class PhysicalImgFromDiscrete<T> extends PhysicalImg<T> {
 			final InterpolatorFactory<T, RandomAccessible<T>> interpolatorFactory,
 			final String unit)
 	{
-		super( 	Views.interpolate(rai, interpolatorFactory),
-				TransformUtils.transformRealInterval(rai, pixelToPhysical),
+		super( RealViews.transform( Views.interpolate(rai, interpolatorFactory), pixelToPhysical ),
+				TransformUtils.transformRealInterval( rai, pixelToPhysical ),
 				unit);
 
 		this.imageRaw = rai;
@@ -40,7 +54,7 @@ public class PhysicalImgFromDiscrete<T> extends PhysicalImg<T> {
 			final InterpolatorFactory<T, RandomAccessible<T>> interpolatorFactory,
 			final String unit)
 	{
-		super(  Views.interpolate(ra, interpolatorFactory),
+		super(  RealViews.transform( Views.interpolate(ra, interpolatorFactory), pixelToPhysical ),
 				TransformUtils.transformRealInterval( interval, pixelToPhysical ),
 				unit);
 
