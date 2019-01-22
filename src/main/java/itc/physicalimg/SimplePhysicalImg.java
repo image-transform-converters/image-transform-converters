@@ -19,11 +19,12 @@ public class SimplePhysicalImg< T extends RealType< T > & NativeType< T > >
 	final private double[] voxelSpacing;
 	final private String unit;
 
-	public SimplePhysicalImg( RandomAccessibleInterval< T > rai,
-							  double[] voxelSpacingXYZ,
-							  String unit )
+	public SimplePhysicalImg(
+			RandomAccessibleInterval< T > raiXYZCT,
+			double[] voxelSpacingXYZ,
+			String unit )
 	{
-		this.rai = rai;
+		this.rai = raiXYZCT;
 		this.voxelSpacing = voxelSpacingXYZ;
 		this.unit = unit;
 
