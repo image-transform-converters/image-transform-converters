@@ -36,7 +36,7 @@ public class SimplePhysicalImg< T extends RealType< T > & NativeType< T > >
 	}
 
 	/**
-	 * Test for whether one can write into the image.
+	 * Tests whether one can write into the image.
 	 * Takes the first pixel and replaces it by another value.
 	 * Checks whether this value was really altered.
 	 * Then it puts the value back to the original value.
@@ -52,11 +52,13 @@ public class SimplePhysicalImg< T extends RealType< T > & NativeType< T > >
 	}
 
 	/**
+	 * Converts physical to pixel units.
+	 *
 	 * This method is useful, e.g. to figure out the correct
 	 * sigmas in pixels for Gaussian smoothing.
 	 *
 	 * @param xyz
-	 * @return
+	 * @return 3D array with the location in pixels
 	 */
 	public long[] toPixels( double[] xyz )
 	{
@@ -76,13 +78,28 @@ public class SimplePhysicalImg< T extends RealType< T > & NativeType< T > >
 	 *
 	 * @param c
 	 * @param t
-	 * @return
+	 * @return 3D RAI
 	 */
 	public RandomAccessibleInterval< T > getRai( long c, long t )
 	{
 		return Views.hyperSlice( Views.hyperSlice( rai, T, t ), C, c );
 	}
 
+	/**
+	 * Returns the value at the requested location.
+	 *
+	 * Comment:
+	 * This feels easier than using an RRA where one would have
+	 * to write more code to achieve the same:
+	 * access = rra.randomAccess();
+	 * access.setPosition( xyzct );
+	 * access.get().getRealDouble();
+	 *
+	 * @param xyz
+	 * @param c
+	 * @param t
+	 * @return double pixel value
+	 */
 	public double valueAt( double[] xyz, long c, long t )
 	{
 		final long[] pixels = toPixels( xyz );
