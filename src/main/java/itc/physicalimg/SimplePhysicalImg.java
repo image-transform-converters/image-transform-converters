@@ -4,6 +4,7 @@ import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
+import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 
 import java.util.HashMap;
@@ -14,11 +15,33 @@ public class SimplePhysicalImg< T extends RealType< T > & NativeType< T > >
 {
 	public static final int C = 3;
 	public static final int T = 4;
+	public static final int Z = 2;
 
 	final private RandomAccessibleInterval< T > rai;
 	final private double[] voxelSpacing;
 	final private String unit;
 
+
+	/**
+	 *
+	 *
+	 *
+	 *
+	 * Notes:
+	 *
+	 * If performance is critical one could consider implementing
+	 * different internal data structures for input RAIs of different dimensionality.
+	 * Essentially one could save a bunch of Views.addDimension during constructing
+	 * the internal representation and save a bunch of Views.hyperslice
+	 * during providing access (getRAI methods).
+	 * This could be achieved via different constructors for
+	 * input RAIs of different dimensionality.
+	 *
+	 *
+	 * @param raiXYZCT
+	 * @param voxelSpacingXYZ
+	 * @param unit
+	 */
 	public SimplePhysicalImg(
 			RandomAccessibleInterval< T > raiXYZCT,
 			double[] voxelSpacingXYZ,
@@ -30,7 +53,7 @@ public class SimplePhysicalImg< T extends RealType< T > & NativeType< T > >
 
 		if ( ! isWritable() )
 		{
-			// throw Error or Warning;
+			// throw an Error and crash!
 		}
 
 	}
@@ -71,18 +94,45 @@ public class SimplePhysicalImg< T extends RealType< T > & NativeType< T > >
 	}
 
 	/**
-	 * Returns a 3D rai for the requested channel and time-point.
-	 * As only Views.hyperslice is used the returned rai should be writeable;
-	 * such that changing values in the rai will change values in the
-	 * SimplePhysicalImg
+	 * Returns a writeable 3D rai for the requested channel and time-point.
 	 *
 	 * @param c
 	 * @param t
 	 * @return 3D RAI
 	 */
-	public RandomAccessibleInterval< T > getRai( long c, long t )
+	public RandomAccessibleInterval< T > get3DRAI( long c, long t )
 	{
 		return Views.hyperSlice( Views.hyperSlice( rai, T, t ), C, c );
+	}
+
+
+	/**
+	 * Returns a writeable 2D rai for the requested z-position,
+	 * channel and time-point.
+	 *
+	 * The z position is specified in physical units!
+	 * It will return the plane closest to the requested position.
+	 *
+	 * This method is useful to extract z-slices from a volume.
+	 * This method also makes it possible to use
+	 * this class for 2D (+channel +time) data, in which case the
+	 * requested z-coordinate would be 0.
+	 *
+	 * @param c
+	 * @param t
+	 * @return 2D RAI
+	 */
+	public RandomAccessibleInterval< T > get2DRAI( double z, long c, long t )
+	{
+		final double physicalOffset = rai.min( Z ) / voxelSpacing[ Z ];
+
+		long zPlane = (int) ( z / voxelSpacing[ Z ] - physicalOffset + 0.5 );
+
+		final IntervalView< T > timepoint = Views.hyperSlice( rai, T, t );
+		final IntervalView< T > channel = Views.hyperSlice( timepoint, C, c );
+		final IntervalView< T > plane = Views.hyperSlice( channel, Z, zPlane );
+
+		return plane;
 	}
 
 	/**
@@ -103,7 +153,7 @@ public class SimplePhysicalImg< T extends RealType< T > & NativeType< T > >
 	public double valueAt( double[] xyz, long c, long t )
 	{
 		final long[] pixels = toPixels( xyz );
-		final RandomAccess< T > access = getRai( c, t ).randomAccess();
+		final RandomAccess< T > access = get3DRAI( c, t ).randomAccess();
 		access.setPosition( pixels );
 
 		return access.get().getRealDouble();
