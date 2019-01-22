@@ -1,13 +1,8 @@
 package itc.physicalimg;
 
-import itc.utilities.CopyUtils;
-import itc.utilities.TransformUtils;
+import itc.utilities.*;
 import net.imglib2.*;
-import net.imglib2.interpolation.InterpolatorFactory;
-import net.imglib2.realtransform.AffineGet;
-import net.imglib2.realtransform.RealViews;
-import net.imglib2.realtransform.Scale;
-import net.imglib2.realtransform.Scale3D;
+import net.imglib2.realtransform.*;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.RandomAccessibleOnRealRandomAccessible;
@@ -101,7 +96,7 @@ public class PhysicalImg < T extends RealType< T > & NativeType< T > > implement
 		assert spacing.length == 3: "Input dimensions do not match or are not 3.";
 
 		final FinalInterval pixelInterval = interval( spacing );
-		final RandomAccessible< T > ra = raView( spacing );
+		final RandomAccessible< T > ra = raViewPixel( spacing );
 
 		return Views.interval( ra, pixelInterval );
 	}
@@ -117,6 +112,13 @@ public class PhysicalImg < T extends RealType< T > & NativeType< T > > implement
 //		return arrayImg;
 //	}
 
+	/**
+	 * Returns a discrete interval that describes the extents of this PhysicalImg
+	 * in pixels, at the given spacing.
+	 * 
+	 * @param spacing the pixel spacing
+	 * @return
+	 */
 	private FinalInterval interval( double... spacing )
 	{
 		final Scale3D scale = TransformUtils.getPhysicalToPixelScaleTransform3D( spacing );
@@ -130,15 +132,27 @@ public class PhysicalImg < T extends RealType< T > & NativeType< T > > implement
 	}
 
 	/**
-	 * Returns a {@link RandomAccessible} in pixel space, when sampling this
-	 * PhyiscalImg at the provided spacing.
+	 * Returns a {@link RandomAccessible} in physical space.
+	 * 
+	 * @param spacing
+	 * 			the spacing at which the output should be sampled
+	 * @return an image in pixel space
+	 */
+	public RandomAccessible< T > raView()
+	{
+		return Views.raster( this );
+	}
+
+	/**
+	 * Returns a {@link RandomAccessible} in pixel space, that samples this
+	 * PhyiscalImg at the provided pixel spacing.
 	 *  
 	 * @param spacing the spacing at which the output should be sampled
 	 * @return an image in pixel space
 	 */
-	public RandomAccessible< T > raView( double... spacing  )
+	public RandomAccessible< T > raViewPixel( double... spacing  )
 	{
-		assert spacing.length == 3: "Input dimensions do not match or are not 3.";
+		assert spacing.length >= rra.numDimensions(): "Must provide at least as many spacing values as number of dimensions (" + rra.numDimensions() +")";
 
 		final Scale3D scale = TransformUtils.getScaleTransform3D( spacing );
 		final RealRandomAccessible< T > scaledRRA = RealViews.transform( rra, scale );
@@ -147,6 +161,15 @@ public class PhysicalImg < T extends RealType< T > & NativeType< T > > implement
 		return raster;
 	}
 
+	/**
+	 * Resamples this PhysicalImg over its interval at the specified pixel spacing 
+	 * and returns a new PhysicalImg.  Creates a new {@link RandomAccessibleInterval}, 
+	 * which can be easily written into.
+	 * 
+	 * @param spacing
+	 * 			the pixel spacing of the output PhysicalImg
+	 * @return the new PhysicalImg
+	 */
 	public PhysicalImg< T > copy( double... spacing )
 	{
 		RandomAccessibleInterval<T> rai = CopyUtils.copyAsArrayImg( raiView( spacing ) );
@@ -161,22 +184,59 @@ public class PhysicalImg < T extends RealType< T > & NativeType< T > > implement
 				.spacing( spacing )
 				.wrap();
 	}
-
-	public RealRandomAccessible< T > getRRA()
+	
+	public PhysicalImg< T > emptyCopy( double... spacing )
 	{
-		return rra;
+		RandomAccessibleInterval<T> rai = CopyUtils.createArrayImg( raiView( spacing ));
+		
+		if( builder != null )
+			return builder.wrap(rai);
+		
+		// this is right if its correct to concatenate
+		return new PhysicalImgBuilder<>( rai )
+				.pixelToPhysical(pixelToPhysical)
+				.unit( unit )
+				.spacing( spacing )
+				.wrap();
 	}
 
+	/**
+	 * Copies the contents of this PhysicalImg into the  
+	 * 
+	 * @param other destination PhysicalImg
+	 * @return
+	 */
+	public <S extends RealType<S> & NativeType<S>> void copyInto( PhysicalImg<S> other )
+	{
+		RealTransformRealRandomAccessible<T, InverseRealTransform>.RealTransformRealRandomAccess source = RealViews.transform( this, other.pixelToPhysical.inverse() ).realRandomAccess();
+		Cursor<S> destinationCursor = Views.flatIterable( other.wrappedRAI ).cursor();
+		while( destinationCursor.hasNext() )
+		{
+			destinationCursor.fwd();
+			source.setPosition(destinationCursor);
+			destinationCursor.get().setReal( source.get().getRealDouble());
+		}
+	}
+
+	/**
+	 * @return the real interval spanned by this PhysicalImg
+	 */
 	public RealInterval getInterval()
 	{
 		return interval;
 	}
 
+	/**
+	 * @return the units for this PhysicalImg space
+	 */
 	public String getUnit()
 	{
 		return unit;
 	}
 
+	/**
+	 * @return the {@link RandomAccessibleInterval} from which this PhysicalImg gets its intensities
+	 */
 	public RandomAccessibleInterval< T > getWrappedRAI()
 	{
 		return wrappedRAI;

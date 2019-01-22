@@ -44,9 +44,23 @@ public class TransformUtils {
 		return new FinalRealInterval(min, max);
 	}
 
+	/**
+	 * Returns the smallest discrete interval that contains 
+	 * the given {@link RealInterval} after it is transformed by the give
+	 * {@link RealTransform}.
+	 * 
+	 * @param interval the real interval
+	 * @param xfm the transformation 
+	 * @return the discrete interval
+	 */
 	public static FinalInterval transformRealIntervalExpand(
 			final RealInterval interval,
 			final RealTransform xfm ) {
+		
+		// TODO this could result in sub-pixel errors. Should address this
+		
+		// TODO make a similar method to this that returns the largest interval that is contained
+		// 		by the transformed real interval?
 		
 		int nd = interval.numDimensions();
 		FinalRealInterval realTransformedInterval = transformRealInterval(interval, xfm );

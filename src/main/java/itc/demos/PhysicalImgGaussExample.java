@@ -32,19 +32,24 @@ public class PhysicalImgGaussExample
 
 		final PhysicalImg< IntType > img = builder.wrap( ints );
 
+		// show the original image
 		BdvStackSource<IntType> bdv = BdvFunctions.show( img.raiView(), "input" );
 
-		final PhysicalImg< IntType > gauss = builder.wrap( CopyUtils.copyAsArrayImg( img.raiView( 1, 1, 1)));
 
+		// prepare a new PhysicalImg for the output of filtering
+		// allocates new data
+		final PhysicalImg< IntType > gauss = builder
+				.spacing( 2, 2, 2 )
+				.wrap( CopyUtils.copyAsArrayImg( img.raiView( 1, 1, 1)));
+	
 		
 		Gauss3.gauss(
 				gauss.getInPixelUnits( 3.0, 3.0, 3.0),
-				img.raView( 1, 1, 1 ),
+				img.raViewPixel( 1, 1, 1 ),
 				gauss.getWrappedRAI() // Here one has to know that the wrappedRAI has the correction spacing
 		);
+		
+		// show the smoothed image
 		BdvFunctions.show( gauss.raiView(), "gauss", BdvOptions.options().addTo(bdv) );
-		
-		
-
 	}
 }

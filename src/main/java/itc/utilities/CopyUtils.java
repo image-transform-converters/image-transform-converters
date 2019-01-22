@@ -25,6 +25,12 @@ public class CopyUtils
 	}
 
 	public static < T extends RealType< T > & NativeType< T > >
+	RandomAccessibleInterval< T > createArrayImg( RandomAccessibleInterval< T > orig )
+	{
+		return createArrayImg( orig, Util.getTypeFromInterval( orig ));
+	}
+
+	public static < T extends RealType< T > & NativeType< T > >
 	RandomAccessibleInterval< T > copyAsArrayImg( RandomAccessibleInterval< T > orig )
 	{
 		final RandomAccessibleInterval<T> copy = createArrayImg( orig, Util.getTypeFromInterval( orig ));
