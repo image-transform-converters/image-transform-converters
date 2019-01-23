@@ -7,12 +7,15 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class ElastixTransform {
+
+    // TODO : in the toString method, put the field Transform at the first line
 
     public String Transform;
     public Integer NumberOfParameters;
@@ -46,7 +49,7 @@ public class ElastixTransform {
     public String ResultImageFormat;
     public String ResultImagePixelType;
     public Boolean CompressResultImage;
-    
+
     /**
      * Returns a String representation of the current ElastixTransform object
      * Fit the normal Data representation in TransformParameters files provided by elastix
@@ -199,8 +202,84 @@ public class ElastixTransform {
                 }
             }
         }
-        return out;
+
+        // Casting to 2D or 3D transformation
+
+        ElastixTransform dimensionCastET;
+
+        if (!out.FixedImageDimension.equals(out.MovingImageDimension)) {
+            // Do not handle 2D to 3D transformation
+            System.err.println("fixed dimension = "+out.FixedImageDimension);
+            System.err.println("moving dimension = "+out.MovingImageDimension);
+            System.err.println("Unhandled case : non identical dimensions transformation");
+            throw new UnsupportedOperationException();
+        }
+
+        switch (out.FixedImageDimension) {
+            case 2:
+                switch (out.getClass().getSimpleName()) {
+                    case "ElastixAffineTransform":
+                        dimensionCastET = upCast(out, ElastixAffineTransform2D.class);
+                        break;
+                    case "ElastixBSplineTransform":
+                        dimensionCastET = upCast(out,ElastixBSplineTransform2D.class);
+                        break;
+                    case "ElastixSimilarityTransform":
+                        dimensionCastET = upCast(out,ElastixSimilarityTransform2D.class);
+                        break;
+                    case "ElastixEulerTransform":
+                        dimensionCastET = upCast(out,ElastixEulerTransform2D.class);
+                        break;
+                    default:
+                        throw new UnsupportedOperationException();
+                }
+                break;
+            case 3:
+                switch (out.getClass().getSimpleName()) {
+                    case "ElastixAffineTransform":
+                        dimensionCastET = upCast(out, ElastixAffineTransform3D.class);
+                        break;
+                    case "ElastixBSplineTransform":
+                        dimensionCastET = upCast(out,ElastixBSplineTransform3D.class);
+                        break;
+                    case "ElastixSimilarityTransform":
+                        dimensionCastET = upCast(out,ElastixSimilarityTransform3D.class);
+                        break;
+                    case "ElastixEulerTransform":
+                        dimensionCastET = upCast(out,ElastixEulerTransform3D.class);
+                        break;
+                    default:
+                        throw new UnsupportedOperationException();
+                }
+                break;
+            default:
+                System.err.println(out.FixedImageDimension+"D transform unsupported.");
+                throw new UnsupportedOperationException();
+        }
+        return dimensionCastET;
     }
+
+
+    static ElastixTransform upCast(ElastixTransform et, Class classType) {
+        // Upcasting
+        ElastixTransform et_out = null;
+        try {
+            et_out = (ElastixTransform) classType.newInstance();
+        } catch (InstantiationException|IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        try {
+            Field[] fields = et.getClass().getFields();
+            for (int i=0;i<fields.length;i++) {
+                Field f = fields[i];
+                    f.set(et_out,f.get(et));
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return et_out;
+    }
+
 
     /**
      * Inner class for file to object conversion of ElaslixTransform objects
@@ -250,21 +329,26 @@ public class ElastixTransform {
 
     public static void main( String[] args )
     {
-        try {
             String path = "/home/nico/Dropbox/BIOP/image-transform-converters/src/test/resources/elastix/";
-            String fName;
-            fName = "TransformParameters.0.txt";
-            fName = "TransformParameters.1.txt";
-            fName = "TransformParameters.2.txt";
+            ArrayList<String> fName = new ArrayList<>();
+            fName.add("TransformParameters.0.txt");
+            fName.add("TransformParameters.1.txt");
+            fName.add("TransformParameters.2.txt");
 
-            fName = "TransformParameters.Affine.txt";
-            fName = "TransformParameters.BSpline.txt";
-            fName = "TransformParameters.Similarity.txt";
-            ElastixTransform et =  ElastixTransform.load(new File(path+fName));
-            System.out.println(et);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            fName.add("TransformParameters.Affine.txt");
+            fName.add("TransformParameters.BSpline.txt");
+            fName.add("TransformParameters.Similarity.txt");
+
+            fName.forEach( fileName -> {
+                try {
+                    System.out.print(fileName +" > ");
+                    ElastixTransform et =  ElastixTransform.load(new File(path+fileName));
+                    //System.out.println(et);
+                    System.out.println(et.getClass().getName());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
     }
 
 }
