@@ -64,7 +64,7 @@
 
 	<properties>
 		<license.licenseName>bsd_2</license.licenseName>
-		<license.copyrightOwners>John Bogovic</license.copyrightOwners>
+		<license.copyrightOwners>John Bogovic, Nicolas Chiaruttini, and Christian Tischer</license.copyrightOwners>
 		<license.projectName>image-transform-converters</license.projectName>
 
         <enforcer.skip>true</enforcer.skip>
