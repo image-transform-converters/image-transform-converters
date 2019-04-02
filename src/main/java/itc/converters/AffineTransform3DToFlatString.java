@@ -8,7 +8,8 @@ import itc.transforms.AffineAsFlatString;
 import net.imglib2.realtransform.AffineTransform3D;
 
 // TODO there should be a AffineFlatString class 
-public class AffineTransform3DToFlatString implements ImageTransformConverterA< AffineTransform3D, AffineAsFlatString > {
+public class AffineTransform3DToFlatString
+		implements ImageTransformConverterA< AffineTransform3D, AffineAsFlatString > {
 	
 	private String delimiter = " ";
 

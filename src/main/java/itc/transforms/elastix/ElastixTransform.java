@@ -15,6 +15,13 @@ import java.util.stream.Collectors;
 
 public class ElastixTransform {
 
+    public static final String EULER_TRANSFORM = "EulerTransform";
+    public static final String AFFINE_TRANSFORM = "AffineTransform";
+    public static final String BSPLINE_TRANSFORM = "BSplineTransform";
+    public static final String SIMILARITY_TRANSFORM = "SimilarityTransform";
+    public static final String TRANSLATION_TRANSFORM = "TranslationTransform";
+    public static final String SPLINE_KERNEL_TRANSFORM = "SplineKernelTransform";
+
     // TODO : in the toString method, put the field Transform at the first line
 
     public String Transform;
@@ -150,7 +157,8 @@ public class ElastixTransform {
      * @param f file generated from Elastix
      * @return ElastixTransform object, containing all properties from the file
      */
-    public static ElastixTransform load(File f) throws IOException, UnsupportedOperationException {
+    public static ElastixTransform load(File f)
+            throws IOException, UnsupportedOperationException {
 
         BufferedReader file = new BufferedReader(new FileReader(f));
         String line;
@@ -167,23 +175,25 @@ public class ElastixTransform {
         assert m.group(1).equals("Transform");
 
         switch (m.group(2)) {
-            case "\"TranslationTransform\"": case "\"SplineKernelTransform\"":
+            case "\"" + TRANSLATION_TRANSFORM + "\"":
                 throw new UnsupportedOperationException();
-            case "\"EulerTransform\"":
+            case "\"" + SPLINE_KERNEL_TRANSFORM + "\"":
+                throw new UnsupportedOperationException();
+            case  "\"" + EULER_TRANSFORM + "\"":
                 out = new ElastixEulerTransform();
-                out.Transform = "EulerTransform";
+                out.Transform = EULER_TRANSFORM;
                 break;
-            case "\"AffineTransform\"":
+            case "\"" + AFFINE_TRANSFORM + "\"":
                 out = new ElastixAffineTransform();
-                out.Transform = "AffineTransform";
+                out.Transform = AFFINE_TRANSFORM;
                 break;
-            case "\"BSplineTransform\"":
+            case "\"" + BSPLINE_TRANSFORM + "\"":
                 out = new ElastixBSplineTransform();
-                out.Transform = "BSplineTransform";
+                out.Transform = BSPLINE_TRANSFORM;
                 break;
-            case "\"SimilarityTransform\"":
+            case "\"" + SIMILARITY_TRANSFORM + "\"":
                 out = new ElastixSimilarityTransform();
-                out.Transform = "SimilarityTransform";
+                out.Transform = SIMILARITY_TRANSFORM;
                 break;
             default:
                 throw new UnsupportedOperationException();

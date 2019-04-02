@@ -13,6 +13,18 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
+/**
+ * The BdvTransform is a 3D affine transform, specifying how to get
+ * from voxel coordinates (indices) to physical coordinates.
+ *
+ * Thus even if there is no rotation the transform will contain the scaling factors
+ * (calibration) that relate the voxel indices to the physical coordinates.
+ * For example, a calibration of 0.1 micrometer in each dimension will result
+ * in an affine transform with all diagonal elements set to 0.1 and all other elements
+ * set to zero.
+ *
+ */
 public class BdvTransform
 {
 
@@ -23,7 +35,11 @@ public class BdvTransform
 	public final double[] voxelSizes;
 	public final long[] imageDimensions;
 
-	public BdvTransform( AffineTransform3D affineTransform3D, String unit, double[] voxelSizes, long[] imageDimensions )
+	public BdvTransform(
+			AffineTransform3D affineTransform3D,
+			String unit,
+			double[] voxelSizes,
+			long[] imageDimensions )
 	{
 		this.affineTransform3D = affineTransform3D;
 		this.unit = unit;
@@ -84,11 +100,22 @@ public class BdvTransform
 
 		final AffineTransform3D affineTransform3D = affineTransform3D( affine );
 
-		final double[] voxelSizes = Arrays.stream( voxelSize.split( BDV_DELIM ) ).mapToDouble( Double::parseDouble ).toArray();
+		final double[] voxelSizes =
+				Arrays.stream( voxelSize.split( BDV_DELIM ) )
+						.mapToDouble( Double::parseDouble )
+						.toArray();
 
-		final long[] imageDimensions = Arrays.stream( imageDimension.split( BDV_DELIM ) ).mapToLong( Long::parseLong ).toArray();
+		final long[] imageDimensions =
+				Arrays.stream( imageDimension.split( BDV_DELIM ) )
+						.mapToLong( Long::parseLong )
+						.toArray();
 
-		final BdvTransform bdvTransform = new BdvTransform( affineTransform3D, unit.trim(), voxelSizes, imageDimensions );
+		final BdvTransform bdvTransform =
+				new BdvTransform(
+						affineTransform3D,
+						unit.trim(),
+						voxelSizes,
+						imageDimensions );
 
 		return bdvTransform;
 	}

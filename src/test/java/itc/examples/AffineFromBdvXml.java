@@ -9,7 +9,8 @@ public class AffineFromBdvXml
 {
 	public static void main( String[] args ) throws IOException
 	{
-		final File file = new File( AffineFromBdvXml.class.getResource( "../../bdv/bdv.xml" ).getFile() );
+		final File file = new File(
+				AffineFromBdvXml.class.getResource( "../../bdv/bdv.xml" ).getFile() );
 
 		BdvTransform.load( file );
 	}

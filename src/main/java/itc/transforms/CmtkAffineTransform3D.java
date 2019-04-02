@@ -21,8 +21,14 @@ public class CmtkAffineTransform3D {
 
 	public final boolean logScaleFactors = false;
 
-	public CmtkAffineTransform3D(String reference_study, String floating_study, double[] xlate, double[] rotate,
-			double[] scale, double[] shear, double[] center) {
+	public CmtkAffineTransform3D(
+			String reference_study,
+			String floating_study,
+			double[] xlate,
+			double[] rotate,
+			double[] scale,
+			double[] shear,
+			double[] center) {
 
 		// TODO needs better doc for each field
 		// TODO consider making getters that create defensive copies of the arrays

@@ -46,7 +46,8 @@ public class ElastixAffineToAffineTransform3D
 		return null;
 	}
 
-	private static AffineTransform2D from2D( ElastixAffineTransform elastixAffineTransform )
+	private static AffineTransform2D from2D(
+			ElastixAffineTransform elastixAffineTransform )
 	{
 		return null;
 	}
