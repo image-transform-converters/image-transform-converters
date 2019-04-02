@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.scijava.plugin.Parameter;
 
 public class ElastixTransform {
 
@@ -23,38 +24,58 @@ public class ElastixTransform {
     public static final String SPLINE_KERNEL_TRANSFORM = "SplineKernelTransform";
 
     // TODO : in the toString method, put the field Transform at the first line
-
+    @Parameter
     public String Transform;
+    @Parameter
     public Integer NumberOfParameters;
+    @Parameter
     public Double[] TransformParameters;
-
+    @Parameter
     public String InitialTransformParametersFileName;
+    @Parameter
     public String HowToCombineTransforms;
 
     // Image specific
+    @Parameter
     public Integer FixedImageDimension;
+    @Parameter
     public Integer MovingImageDimension;
+    @Parameter
     public String FixedInternalImagePixelType; // "float", "unsigned char"
+    @Parameter
     public String MovingInternalImagePixelType;
+    @Parameter
     public Integer[] Size;
+    @Parameter
     public Integer[] Index;
+    @Parameter
     public Double[] Spacing;
+    @Parameter
     public Double[] Origin;
+    @Parameter
     public Double[] Direction;
+    @Parameter
     public Boolean UseDirectionCosines;
 
     // Transform specific
     //  -> ElastixTransform subclasses
 
     // ResampleInterpolator specific
+    @Parameter
     public String ResampleInterpolator;
+    @Parameter
     public Integer FinalBSplineInterpolationOrder;
 
     // Resampler specific
+    @Parameter
     public String Resampler;
+    @Parameter
     public Double DefaultPixelValue;
+    @Parameter
     public String ResultImageFormat;
+    @Parameter
     public String ResultImagePixelType;
+    @Parameter
     public Boolean CompressResultImage;
 
     /**
@@ -68,7 +89,7 @@ public class ElastixTransform {
         try {
             for (int i=0;i<fields.length;i++) {
                 Field f = fields[i];
-                if (f.get(this)!=null) { // Provided the field has a value
+                if ((f.get(this)!=null)&&(f.isAnnotationPresent(Parameter.class))) { // Provided the field has a value and is annotated as a Scijava Parameter
                     switch (f.getType().getSimpleName()) {
                         case "String": case "Boolean":
                             str += "(" + f.getName() + " \"" + f.get(this) + "\")\n";
@@ -207,7 +228,9 @@ public class ElastixTransform {
             if (m.matches()) {
                 try {
                     field = elastixTransformClass.getField(m.group(1));
-                    fillField(out, field, m.group(2));
+                    if (field.isAnnotationPresent(Parameter.class)) { // save field only if it is annotated as a Scijava Parameter
+                        fillField(out, field, m.group(2));
+                    }
                 } catch (NoSuchFieldException e) {
                     System.err.println("Field "+m.group(1)+" not found in "+elastixTransformClass.getName()+" class.");
                 }
@@ -283,7 +306,9 @@ public class ElastixTransform {
             Field[] fields = et.getClass().getFields();
             for (int i=0;i<fields.length;i++) {
                 Field f = fields[i];
+                if (f.isAnnotationPresent(Parameter.class)) {
                     f.set(et_out,f.get(et));
+                }
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
