@@ -363,28 +363,4 @@ public class ElastixTransform {
         }
     }
 
-    public static void main( String[] args )
-    {
-            String path = "/home/nico/Dropbox/BIOP/image-transform-converters/src/test/resources/elastix/";
-            ArrayList<String> fName = new ArrayList<>();
-            fName.add("TransformParameters.0.txt");
-            fName.add("TransformParameters.1.txt");
-            fName.add("TransformParameters.2.txt");
-
-            fName.add("TransformParameters.Affine.txt");
-            fName.add("TransformParameters.BSpline.txt");
-            fName.add("TransformParameters.Similarity.txt");
-
-            fName.forEach( fileName -> {
-                try {
-                    System.out.print(fileName +" > ");
-                    ElastixTransform et =  ElastixTransform.load(new File(path+fileName));
-                    //System.out.println(et);
-                    System.out.println(et.getClass().getName());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-    }
-
 }
