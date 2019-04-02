@@ -1,17 +1,32 @@
 package itc.transforms.bdv;
 
 import itc.transforms.elastix.*;
+import javafx.scene.transform.Affine;
+import net.imglib2.realtransform.AffineTransform3D;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BdvTransform
 {
+
+	public static final String BDV_DELIM = " ";
+	AffineTransform3D affineTransform3D;
+	String unit;
+	double[] voxelSizes;
+
+	public BdvTransform( AffineTransform3D affineTransform3D, String unit, double[] voxelSizes )
+	{
+		this.affineTransform3D = affineTransform3D;
+		this.unit = unit;
+		this.voxelSizes = voxelSizes;
+	}
 
 	public static BdvTransform load( File f ) throws IOException
 	{
@@ -56,8 +71,22 @@ public class BdvTransform
 			}
 		}
 
+		final AffineTransform3D affineTransform3D = affineTransform3D( affine );
 
-		return null;
+		final double[] voxelSizes = Arrays.stream( size.split( BDV_DELIM ) ).mapToDouble( Double::parseDouble ).toArray();
+
+		final BdvTransform bdvTransform = new BdvTransform( affineTransform3D, unit.trim(), voxelSizes );
+
+		return bdvTransform;
+	}
+
+	public static AffineTransform3D affineTransform3D( String affine )
+	{
+		final double[] affineParams = Arrays.stream( affine.split( BDV_DELIM ) ).mapToDouble( Double::parseDouble ).toArray();
+
+		final AffineTransform3D affineTransform3D = new AffineTransform3D();
+		affineTransform3D.set( affineParams );
+		return affineTransform3D;
 	}
 
 }
