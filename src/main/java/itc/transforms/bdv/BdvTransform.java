@@ -17,15 +17,18 @@ public class BdvTransform
 {
 
 	public static final String BDV_DELIM = " ";
-	AffineTransform3D affineTransform3D;
-	String unit;
-	double[] voxelSizes;
 
-	public BdvTransform( AffineTransform3D affineTransform3D, String unit, double[] voxelSizes )
+	public final AffineTransform3D affineTransform3D;
+	public final String unit;
+	public final double[] voxelSizes;
+	public final long[] imageDimensions;
+
+	public BdvTransform( AffineTransform3D affineTransform3D, String unit, double[] voxelSizes, long[] imageDimensions )
 	{
 		this.affineTransform3D = affineTransform3D;
 		this.unit = unit;
 		this.voxelSizes = voxelSizes;
+		this.imageDimensions = imageDimensions;
 	}
 
 	public static BdvTransform load( File f ) throws IOException
@@ -40,16 +43,14 @@ public class BdvTransform
 
 		String affine = null;
 		String unit = null;
-		String size = null;
+		String voxelSize = null;
+		String imageDimension = null;
 		Matcher m;
 
 		boolean voxelSizeGroup = false;
 
 		while ((line = file.readLine()) != null) {
 
-			m = affinePattern.matcher( line );
-			if (m.matches())
-				affine = m.group(1);
 
 			m = voxelSizeStartPattern.matcher( line );
 			if (m.matches())
@@ -63,19 +64,31 @@ public class BdvTransform
 			{
 				m = sizePattern.matcher( line );
 				if (m.matches())
-					size = m.group(1);
+					voxelSize = m.group(1);
 
 				m = unitPattern.matcher( line );
 				if (m.matches())
 					unit = m.group(1);
 			}
+			else
+			{
+				m = affinePattern.matcher( line );
+				if (m.matches())
+					affine = m.group(1);
+
+				m = sizePattern.matcher( line );
+				if (m.matches())
+					imageDimension = m.group(1);
+			}
 		}
 
 		final AffineTransform3D affineTransform3D = affineTransform3D( affine );
 
-		final double[] voxelSizes = Arrays.stream( size.split( BDV_DELIM ) ).mapToDouble( Double::parseDouble ).toArray();
+		final double[] voxelSizes = Arrays.stream( voxelSize.split( BDV_DELIM ) ).mapToDouble( Double::parseDouble ).toArray();
 
-		final BdvTransform bdvTransform = new BdvTransform( affineTransform3D, unit.trim(), voxelSizes );
+		final long[] imageDimensions = Arrays.stream( imageDimension.split( BDV_DELIM ) ).mapToLong( Long::parseLong ).toArray();
+
+		final BdvTransform bdvTransform = new BdvTransform( affineTransform3D, unit.trim(), voxelSizes, imageDimensions );
 
 		return bdvTransform;
 	}
