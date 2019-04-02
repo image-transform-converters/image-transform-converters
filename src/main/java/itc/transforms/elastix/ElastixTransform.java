@@ -105,6 +105,7 @@ public class ElastixTransform {
             writer = new BufferedWriter(new FileWriter(temp));
             writer.write(this.toString());
             writer.close();
+            temp.deleteOnExit(); // Temporary file is deleted on virtual machine exit
             return temp;
         } catch (IOException e) {
             e.printStackTrace();
