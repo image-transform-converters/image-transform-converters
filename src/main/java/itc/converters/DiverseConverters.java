@@ -177,8 +177,7 @@ public abstract class DiverseConverters
 	 * @return string as it appears in the *.xml files of the BigDataViewer
 	 * SpimData files
 	 */
-	public static String affineTransform3DToBigDataViewerAffine3DString(
-			AffineTransform3D affineTransform3D )
+	public static String affineTransform3DToBigDataViewerAffine3DString( AffineTransform3D affineTransform3D )
 	{
 		String out = "";
 

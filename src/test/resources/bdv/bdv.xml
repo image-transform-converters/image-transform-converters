@@ -1,0 +1,39 @@
+<SpimData version="0.2">
+  <BasePath type="relative">.</BasePath>
+  <SequenceDescription>
+    <ImageLoader format="bdv.hdf5">
+      <hdf5 type="relative">em-raw-parapod-fib.h5</hdf5>
+    </ImageLoader>
+    <ViewSetups>
+      <Attributes name="channel">
+        <Channel>
+          <id>1</id>
+          <name>1</name>
+        </Channel>
+      </Attributes>
+      <ViewSetup>
+        <id>0</id>
+        <name>channel 1</name>
+        <size>4560 4008 7246</size>
+        <voxelSize>
+          <unit>micrometer</unit>
+          <size>0.01 0.01 0.01</size>
+        </voxelSize>
+        <attributes>
+          <channel>1</channel>
+        </attributes>
+      </ViewSetup>
+    </ViewSetups>
+    <Timepoints type="range">
+      <first>0</first>
+      <last>0</last>
+    </Timepoints>
+  </SequenceDescription>
+  <ViewRegistrations>
+    <ViewRegistration setup="0" timepoint="0">
+      <ViewTransform type="affine">
+       <affine>-0.0054 0.0062 -0.0058 191.5115 -0.0046 0.0035 0.0081 42.2484 0.0070 0.0070 0.0010 105.6954 </affine>
+      </ViewTransform>
+    </ViewRegistration>
+  </ViewRegistrations>
+</SpimData>
