@@ -1,10 +1,8 @@
 package itc.converters;
 
 import itc.transforms.ElastixEulerTransform3D;
+import itc.utilities.TransformUtils;
 import net.imglib2.realtransform.AffineTransform3D;
-import net.imglib2.realtransform.Scale;
-import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
-import org.apache.commons.math3.geometry.euclidean.threed.RotationConvention;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 public abstract class DiverseConverters
@@ -43,10 +41,10 @@ public abstract class DiverseConverters
 
 		double angle = amiraRotationAngleInDegrees / 180.0 * Math.PI;
 
-		final double[][] rotationMatrix = rotationMatrix( axis, angle );
+		final double[][] rotationMatrix = TransformUtils.rotationMatrix( axis, angle );
 
 		final AffineTransform3D transform3D =
-				rotationAroundImageCenterTransform(
+				TransformUtils.rotationAroundImageCenterTransform(
 						rotationMatrix,
 						targetImageCenterInPixels );
 
@@ -62,65 +60,6 @@ public abstract class DiverseConverters
 		transform3D.translate( translationInPixels );
 
 		return transform3D;
-	}
-
-	/**
-	 * Constructs an AffineTransform3D, performing an
-	 * rotation around a rotation center.
-	 *
-	 * @param rotation
-	 * @param rotationCenter
-	 * @return
-	 */
-	public static AffineTransform3D rotationAroundImageCenterTransform(
-			double[][] rotation,
-			double[] rotationCenter )
-	{
-
-		final AffineTransform3D rotationTransform = rotationAffineTransform3D( rotation );
-
-		double[] translationFromCenterToOrigin = new double[ 3 ];
-		double[] translationFromOriginToCenter = new double[ 3 ];
-
-		for ( int d = 0; d < 3; ++d )
-		{
-			translationFromCenterToOrigin[ d ] = - rotationCenter[ d ];
-			translationFromOriginToCenter[ d ] = + rotationCenter[ d ];
-		}
-
-		// move to rotation centre...
-		final AffineTransform3D rotationAroundCenterTransform = new AffineTransform3D();
-		rotationAroundCenterTransform.translate( translationFromCenterToOrigin );
-
-		// ...rotate...
-		rotationAroundCenterTransform.preConcatenate( rotationTransform );
-
-		// ...and move back to the origin
-		final AffineTransform3D transformOriginToCenter = new AffineTransform3D();
-		transformOriginToCenter.translate( translationFromOriginToCenter );
-		rotationAroundCenterTransform.preConcatenate( transformOriginToCenter );
-
-		return rotationAroundCenterTransform;
-	}
-
-
-	/**
-	 * Constructs an AffineTransform3D from a pure rotation.
-	 *
-	 * @param rotationMatrix
-	 * @return
-	 */
-	private static AffineTransform3D rotationAffineTransform3D(
-			double[][] rotationMatrix )
-	{
-
-		final AffineTransform3D rotationTransform = new AffineTransform3D();
-
-		for ( int row = 0; row < 3; ++row )
-			for ( int col = 0; col < 3; ++col )
-				rotationTransform.set( rotationMatrix[ row ][ col ], row, col );
-
-		return rotationTransform;
 	}
 
 
@@ -186,53 +125,6 @@ public abstract class DiverseConverters
 				out += String.format( "%.4f",  affineTransform3D.get( row, col ) ) + " ";
 
 		return out;
-	}
-
-	/**
-	 * Constructs a rotation matrix from an axis and an angle.
-	 * @param axis
-	 * @param angle
-	 * @return rotation matrix
-	 */
-	public static double[][] rotationMatrix( Vector3D axis, double angle )
-	{
-		final Rotation rotation = new Rotation(
-				axis,
-				angle,
-				RotationConvention.VECTOR_OPERATOR );
-
-		final double[][] matrix = rotation.getMatrix();
-
-		return matrix;
-		}
-
-	/**
-	 * TODO: This feels wrong, why does one have to multiply the translation extra?
-	 *
-	 * @param transform
-	 * @param scale
-	 * @return scaled transform
-	 */
-	public static AffineTransform3D scaleAffineTransform3D(
-			AffineTransform3D transform,
-			double[] scale )
-	{
-
-		final AffineTransform3D scaledTransform = transform.copy();
-
-		// TODO: maybe preconcatenate here would avoid the extra
-		// scaling of the translation???
-		transform.concatenate( new Scale( scale ) );
-
-		final double[] translation = transform.getTranslation();
-		for ( int d = 0; d < 3; ++d )
-		{
-			translation[ d ] *= scale[ d ];
-		}
-
-		transform.setTranslation( translation );
-
-		return transform;
 	}
 
 	/**

@@ -6,6 +6,7 @@ import net.imglib2.realtransform.AffineTransform3D;
 
 public class CmtkAffineToAffineTransform3DConverter
 		implements ImageTransformConverterA<CmtkAffineTransform3D, AffineTransform3D> {
+
 	@Override
 	public AffineTransform3D convert(CmtkAffineTransform3D input) {
 

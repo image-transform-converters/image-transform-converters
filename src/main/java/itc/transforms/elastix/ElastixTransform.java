@@ -1,18 +1,13 @@
 package itc.transforms.elastix;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import org.scijava.plugin.Parameter;
+
+import java.io.*;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import org.scijava.plugin.Parameter;
 
 public class ElastixTransform {
 
@@ -22,6 +17,14 @@ public class ElastixTransform {
     public static final String SIMILARITY_TRANSFORM = "SimilarityTransform";
     public static final String TRANSLATION_TRANSFORM = "TranslationTransform";
     public static final String SPLINE_KERNEL_TRANSFORM = "SplineKernelTransform";
+
+    public static final String FINAL_LINEAR_INTERPOLATOR = "FinalLinearInterpolator";
+
+    public static final String DEFAULT_RESAMPLER = "DefaultResampler";
+
+    public static final String RESULT_IMAGE_FORMAT_MHD = "mhd";
+
+    public static final String RESULT_IMAGE_PIXEL_TYPE_UNSIGNED_CHAR = "unsigned char";
 
     // TODO : in the toString method, put the field Transform at the first line
     @Parameter
