@@ -44,8 +44,7 @@ public class AffineTransform3DToElastixAffine3D
 		return elastixAffineTransform3D;
 	}
 
-	private static void setOtherParameters(
-			ElastixAffineTransform3D elastixAffineTransform3D )
+	private static void setOtherParameters( ElastixAffineTransform3D elastixAffineTransform3D )
 	{
 
 		elastixAffineTransform3D.Transform = ElastixTransform.AFFINE_TRANSFORM;
@@ -58,14 +57,14 @@ public class AffineTransform3DToElastixAffine3D
 		elastixAffineTransform3D.FixedInternalImagePixelType = "float";
 		elastixAffineTransform3D.MovingInternalImagePixelType = "float";
 
-		elastixAffineTransform3D.Index  = new Integer[3];
-		elastixAffineTransform3D.Origin = new Double[3];
+		elastixAffineTransform3D.Index  = new Integer[]{ 0, 0, 0 };
+		elastixAffineTransform3D.Origin = new Double[]{ 0.0, 0.0, 0.0};
 		elastixAffineTransform3D.Direction = new Double[]{
 				1.0, 0.0, 0.0,
 				0.0, 1.0, 0.0,
 				0.0, 0.0, 1.0};
 		elastixAffineTransform3D.UseDirectionCosines = false;
-		elastixAffineTransform3D.CenterOfRotationPoint = new Double[3];
+		elastixAffineTransform3D.CenterOfRotationPoint = new Double[]{ 0.0, 0.0, 0.0 };
 		elastixAffineTransform3D.Resampler = ElastixTransform.DEFAULT_RESAMPLER;
 		elastixAffineTransform3D.DefaultPixelValue = 0.0;
 		elastixAffineTransform3D.CompressResultImage = false;

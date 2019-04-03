@@ -107,10 +107,18 @@ public class ElastixTransform {
                             str += "(" + f.getName() + " " + integersList + ")\n";
                             break;
                         case "Double[]":
-                            String doublesList = Arrays.stream((Double[]) f.get(this))
-                                    .map(Object::toString)
-                                    .collect(Collectors.joining(" "));
-                            str += "(" + f.getName() + " " + doublesList + ")\n";
+                            try
+                            {
+
+                                String doublesList = Arrays.stream( ( Double[] ) f.get( this ) )
+                                        .map( x -> String.format("%.12f", x) )
+                                        .collect( Collectors.joining( " " ) );
+                                str += "(" + f.getName() + " " + doublesList + ")\n";
+                            }
+                            catch( Exception e )
+                            {
+                                System.out.println( "Parameter not found: " + f.getName() );
+                            }
                             break;
                         default:
                             System.err.println("Unhandled class : " + f.getType().getSimpleName());
