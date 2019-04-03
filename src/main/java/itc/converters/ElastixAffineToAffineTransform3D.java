@@ -1,11 +1,8 @@
 package itc.converters;
 
-import itc.transforms.ElastixEulerTransform3D;
 import itc.transforms.elastix.ElastixAffineTransform;
 import net.imglib2.realtransform.AffineGet;
-import net.imglib2.realtransform.AffineTransform;
 import net.imglib2.realtransform.AffineTransform2D;
-import net.imglib2.realtransform.AffineTransform3D;
 
 public class ElastixAffineToAffineTransform3D
 {

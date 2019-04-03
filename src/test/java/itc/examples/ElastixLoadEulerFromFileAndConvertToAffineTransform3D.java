@@ -1,7 +1,7 @@
 package itc.examples;
 
 import itc.converters.ElastixEuler3DToAffineTransform3D;
-import itc.transforms.ElastixEulerTransform3D;
+import itc.transforms.elastix.ElastixEulerTransform3D;
 import itc.transforms.elastix.ElastixTransform;
 
 import java.io.File;
@@ -20,9 +20,7 @@ public class ElastixLoadEulerFromFileAndConvertToAffineTransform3D
 			System.out.println( "I am a ElastixEulerTransform3D\n");
 		}
 
-		new ElastixEuler3DToAffineTransform3D().getAffineTransform3D(
-				( ElastixEulerTransform3D ) elastixTransform,
-				new double[]{1.0, 1.0, 1.0 } );
+		new ElastixEuler3DToAffineTransform3D().convert( ( ElastixEulerTransform3D ) elastixTransform );
 
 		System.out.println( elastixTransform );
 	}

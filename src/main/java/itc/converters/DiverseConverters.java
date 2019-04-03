@@ -1,6 +1,7 @@
 package itc.converters;
 
-import itc.transforms.ElastixEulerTransform3D;
+
+import itc.transforms.elastix.ElastixEulerTransform3D;
 import itc.utilities.TransformUtils;
 import net.imglib2.realtransform.AffineTransform3D;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
@@ -247,32 +248,32 @@ public abstract class DiverseConverters
 			String transform,
 			String rotationCentre )
 	{
-		String[] split = transform.split( " " );
-
-		final double[] angles = new double[ 3 ];
-
-		for ( int d = 0; d < 3; ++d )
-		{
-			angles[ d ] = Double.parseDouble( split[ d ] );
-		}
-
-		final double[] translation = new double[ 3 ];
-
-		for ( int d = 0; d < 3; ++d )
-		{
-			translation[ d ] = Double.parseDouble( split[ d + 3 ] );
-		}
-
-		split = rotationCentre.split( " " );
-
-		final double[] rotations = new double[ 3 ];
-
-		for ( int d = 0; d < 3; ++d )
-		{
-			rotations[ d ] = Double.parseDouble( split[ d ] );
-		}
-
-		return new ElastixEulerTransform3D( angles, translation, rotations );
+//		String[] split = transform.split( " " );
+//
+//		final double[] angles = new double[ 3 ];
+//
+//		for ( int d = 0; d < 3; ++d )
+//		{
+//			angles[ d ] = Double.parseDouble( split[ d ] );
+//		}
+//
+//		final double[] translation = new double[ 3 ];
+//
+//		for ( int d = 0; d < 3; ++d )
+//		{
+//			translation[ d ] = Double.parseDouble( split[ d + 3 ] );
+//		}
+//
+//		split = rotationCentre.split( " " );
+//
+//		final double[] rotations = new double[ 3 ];
+//
+//		for ( int d = 0; d < 3; ++d )
+//		{
+//			rotations[ d ] = Double.parseDouble( split[ d ] );
+//		}
+//
+		return null; //ElastixEulerTransform3D( angles, translation, rotations );
 	}
 
 

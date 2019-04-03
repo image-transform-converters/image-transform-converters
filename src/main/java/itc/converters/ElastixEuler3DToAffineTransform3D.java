@@ -1,6 +1,6 @@
 package itc.converters;
 
-import itc.transforms.ElastixEulerTransform3D;
+import itc.transforms.elastix.ElastixEulerTransform3D;
 import net.imglib2.realtransform.AffineTransform3D;
 
 public class ElastixEuler3DToAffineTransform3D
@@ -28,22 +28,17 @@ public class ElastixEuler3DToAffineTransform3D
 	 *
 	 * @param elastixEulerTransform3D
 	 *
-	 * @param targetImageVoxelSpacingInMicrometer
-	 *
-	 * @return an affine transform performing the Euler transform
+	 * @return an affine transform performing the Euler transform, in millimeter units
 	 */
-	public AffineTransform3D getAffineTransform3D(
-			ElastixEulerTransform3D elastixEulerTransform3D,
-			double[] targetImageVoxelSpacingInMicrometer )
+	public static AffineTransform3D convert( ElastixEulerTransform3D elastixEulerTransform3D )
 	{
-
 		final double[] angles = elastixEulerTransform3D.getRotationAnglesInRadians();
 
 		final double[] translationInMillimeters = elastixEulerTransform3D.getTranslationInMillimeters();
 		final double[] translationInPixels = new double[ 3 ];
 		for ( int d = 0; d < 3; ++d )
 		{
-			translationInPixels[ d ] = translationInMillimeters[ d ] / ( 0.001 * targetImageVoxelSpacingInMicrometer[ d ] );
+			translationInPixels[ d ] = translationInMillimeters[ d ];
 		}
 
 		final double[] rotationCenterInMillimeters = elastixEulerTransform3D.getRotationCenterInMillimeters();
@@ -52,8 +47,8 @@ public class ElastixEuler3DToAffineTransform3D
 
 		for ( int d = 0; d < 3; ++d )
 		{
-			rotationCentreVectorInPixelsPositive[ d ] = rotationCenterInMillimeters[ d ] / ( 0.001 * targetImageVoxelSpacingInMicrometer[ d ] );
-			rotationCentreVectorInPixelsNegative[ d ] = - rotationCenterInMillimeters[ d ] / ( 0.001 * targetImageVoxelSpacingInMicrometer[ d ] );
+			rotationCentreVectorInPixelsPositive[ d ] = rotationCenterInMillimeters[ d ];
+			rotationCentreVectorInPixelsNegative[ d ] = - rotationCenterInMillimeters[ d ];
 		}
 
 
@@ -63,9 +58,9 @@ public class ElastixEuler3DToAffineTransform3D
 		//
 		transform3D.translate( rotationCentreVectorInPixelsNegative ); // + or - ??
 		for ( int d = 0; d < 3; ++d)
-		{
 			transform3D.rotate( d, angles[ d ]);
-		}
+
+
 		final AffineTransform3D translateBackFromRotationCentre = new AffineTransform3D();
 		translateBackFromRotationCentre.translate( rotationCentreVectorInPixelsPositive );
 		transform3D.preConcatenate( translateBackFromRotationCentre );

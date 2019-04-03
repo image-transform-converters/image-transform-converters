@@ -32,8 +32,11 @@ public class AmiraEulerToElastixAffineFile
 					new Integer[]{ 550, 518, 570 }
 		);
 
+		// invert, because elastix transform goes from output to input
+		final AffineTransform3D inverse = affineTransform3DInMillimeter.inverse();
+
 		final ElastixAffineTransform3D elastixAffineTransform3D
-				= affineTransform3DToElastixAffine3D.convert( affineTransform3DInMillimeter );
+				= affineTransform3DToElastixAffine3D.convert( inverse );
 
 		elastixAffineTransform3D.save( "/Users/tischer/Desktop/transform.txt" );
 
