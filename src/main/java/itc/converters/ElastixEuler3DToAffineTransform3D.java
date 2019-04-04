@@ -56,11 +56,15 @@ public class ElastixEuler3DToAffineTransform3D
 
 		// rotate around rotation centre
 		//
-		transform3D.translate( rotationCentreVectorInPixelsNegative ); // + or - ??
-		for ( int d = 0; d < 3; ++d)
+
+		// make rotation centre the image centre
+		transform3D.translate( rotationCentreVectorInPixelsNegative );
+
+		// rotate
+		for ( int d = 0; d < 3; ++d )
 			transform3D.rotate( d, angles[ d ]);
 
-
+		// move image centre back
 		final AffineTransform3D translateBackFromRotationCentre = new AffineTransform3D();
 		translateBackFromRotationCentre.translate( rotationCentreVectorInPixelsPositive );
 		transform3D.preConcatenate( translateBackFromRotationCentre );

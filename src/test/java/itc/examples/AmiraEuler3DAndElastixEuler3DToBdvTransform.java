@@ -2,6 +2,7 @@ package itc.examples;
 
 import bdv.util.BdvFunctions;
 import bdv.util.BdvOptions;
+import bdv.util.BdvStackSource;
 import ij.IJ;
 import ij.ImagePlus;
 import itc.converters.AmiraEulerToAffineTransform3D;
@@ -9,14 +10,18 @@ import itc.converters.ElastixEuler3DToAffineTransform3D;
 import itc.transforms.elastix.ElastixEulerTransform3D;
 import itc.transforms.elastix.ElastixTransform;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.img.Img;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.realtransform.AffineTransform3D;
 import net.imglib2.realtransform.Scale;
 import net.imglib2.realtransform.Scale3D;
+import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 
 import java.io.File;
 import java.io.IOException;
+
+import static itc.utilities.TransformUtils.asStringBdvStyle;
 
 public class AmiraEuler3DAndElastixEuler3DToBdvTransform
 {
@@ -44,8 +49,9 @@ public class AmiraEuler3DAndElastixEuler3DToBdvTransform
 		 *
 		 */
 
-		final ElastixTransform elastixTransform = ElastixTransform.load(
-				new File( "/Users/tischer/Documents/rachel-mellwig-em-prospr-registration/data/ganglion-segmentation/elastix-euler.txt" ) );
+		final ElastixTransform elastixTransform =
+				ElastixTransform.load(
+					new File( "/Users/tischer/Desktop/elastix-tmp/TransformParameters.0.txt" ) );
 
 		final AffineTransform3D elastixEulerMillimeter =
 				ElastixEuler3DToAffineTransform3D.convert( ( ElastixEulerTransform3D ) elastixTransform );
@@ -56,7 +62,7 @@ public class AmiraEuler3DAndElastixEuler3DToBdvTransform
 		 *
 		 */
 
-		double voxelSpacingMillimeter = 0.0005;
+		double voxelSpacingMillimeter = 0.0005; // 10.0 / 1000000.0;
 		final AffineTransform3D voxelToMillimeter = new AffineTransform3D();
 		for ( int i = 0; i < 3; i++ )
 			voxelToMillimeter.set( voxelSpacingMillimeter, i , i );
@@ -66,20 +72,40 @@ public class AmiraEuler3DAndElastixEuler3DToBdvTransform
 		for ( int i = 0; i < 3; i++ )
 			milliToMicrometer.set( 1000.0, i , i );
 
-
 		final AffineTransform3D affineTransform3D =
 				voxelToMillimeter
-						.preConcatenate( amiraEulerMillimeter )
 						.preConcatenate( elastixEulerMillimeter.inverse() )
+						.preConcatenate( amiraEulerMillimeter )
 						.preConcatenate( milliToMicrometer );
+
+		System.out.println( asStringBdvStyle( affineTransform3D ) );
+
+
+		final ImagePlus spemGanglionImp = IJ.openImage( "/Users/tischer/Documents/rachel-mellwig-em-prospr-registration/data/ganglion-segmentation/spem-seg-ganglion.tif" );
+
+		final RandomAccessibleInterval< R > spemGanglion = ImageJFunctions.wrapReal( spemGanglionImp );
+		final BdvStackSource< R > spemGanglionSource = BdvFunctions.show( spemGanglion, "spem-ganglion",
+				BdvOptions.options()
+						.sourceTransform( new double[]{ 0.5, 0.5, 0.5 } ) );
+
+		spemGanglionSource.setColor(
+				new ARGBType( ARGBType.rgba( 0, 255, 0, 255 ) ) );
 
 		final ImagePlus fibSemImp = IJ.openImage( "/Users/tischer/Documents/rachel-mellwig-em-prospr-registration/data/ganglion-segmentation/fib-sem-seg-ganglion.tif" );
 
-		final RandomAccessibleInterval< R > fibSem = ImageJFunctions.wrapReal( fibSemImp );
-		BdvFunctions.show( fibSem, "fib-sem-ganglion",
-				BdvOptions.options().sourceTransform( affineTransform3D ) );
+		final RandomAccessibleInterval< R > fibSemGanglion = ImageJFunctions.wrapReal( fibSemImp );
+		final BdvStackSource< R > fibSemSource =
+				BdvFunctions.show( fibSemGanglion, "fib-sem-ganglion",
+					BdvOptions.options()
+						.sourceTransform( affineTransform3D )
+						.addTo( spemGanglionSource.getBdvHandle() ) );
 
+		fibSemSource.setColor(
+				new ARGBType( ARGBType.rgba( 255, 0, 0, 255 ) ) );
 
+//		spemGanglionSource.getBdvHandle()
+//				.getViewerPanel()
+//				.setCurrentViewerTransform( new AffineTransform3D() );
 
 	}
 }
