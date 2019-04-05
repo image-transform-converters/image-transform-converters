@@ -87,7 +87,7 @@ public class AmiraEuler3DAndElastixAffine3DToBdvTransform
 				new ARGBType( ARGBType.rgba( 255, 0, 0, 255 ) ) );
 
 
-		final AffineTransform3D affineTransform3D =
+		final AffineTransform3D affineTransform3DHighRes =
 				getCombinedBdvTransform( amiraEulerMillimeter, elastixEulerMillimeter,  10.0 / 1000000.0 );
 
 
