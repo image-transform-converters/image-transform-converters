@@ -32,23 +32,22 @@ public class ElastixEuler3DToAffineTransform3D
 	 */
 	public static AffineTransform3D convert( ElastixEulerTransform3D elastixEulerTransform3D )
 	{
+		// fetch values from elastix transform
+		//
 		final double[] angles = elastixEulerTransform3D.getRotationAnglesInRadians();
-
-		final double[] translationInMillimeters = elastixEulerTransform3D.getTranslationInMillimeters();
-		final double[] translationInPixels = new double[ 3 ];
-		for ( int d = 0; d < 3; ++d )
-		{
-			translationInPixels[ d ] = translationInMillimeters[ d ];
-		}
-
 		final double[] rotationCenterInMillimeters = elastixEulerTransform3D.getRotationCenterInMillimeters();
-		final double[] rotationCentreVectorInPixelsPositive = new double[ 3 ];
-		final double[] rotationCentreVectorInPixelsNegative = new double[ 3 ];
+		final double[] translationInMillimeters = elastixEulerTransform3D.getTranslationInMillimeters();
+
+
+		// convert
+		//
+		final double[] rotationCentrePositive = new double[ 3 ];
+		final double[] rotationCentreNegative = new double[ 3 ];
 
 		for ( int d = 0; d < 3; ++d )
 		{
-			rotationCentreVectorInPixelsPositive[ d ] = rotationCenterInMillimeters[ d ];
-			rotationCentreVectorInPixelsNegative[ d ] = - rotationCenterInMillimeters[ d ];
+			rotationCentrePositive[ d ] = rotationCenterInMillimeters[ d ];
+			rotationCentreNegative[ d ] = - rotationCenterInMillimeters[ d ];
 		}
 
 
@@ -58,7 +57,7 @@ public class ElastixEuler3DToAffineTransform3D
 		//
 
 		// make rotation centre the image centre
-		transform3D.translate( rotationCentreVectorInPixelsNegative );
+		transform3D.translate( rotationCentreNegative );
 
 		// rotate
 		for ( int d = 0; d < 3; ++d )
@@ -66,12 +65,12 @@ public class ElastixEuler3DToAffineTransform3D
 
 		// move image centre back
 		final AffineTransform3D translateBackFromRotationCentre = new AffineTransform3D();
-		translateBackFromRotationCentre.translate( rotationCentreVectorInPixelsPositive );
+		translateBackFromRotationCentre.translate( rotationCentrePositive );
 		transform3D.preConcatenate( translateBackFromRotationCentre );
 
 		// translate
 		//
-		transform3D.translate( translationInPixels );
+		transform3D.translate( translationInMillimeters );
 
 		return transform3D;
 	}

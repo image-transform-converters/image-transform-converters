@@ -2,7 +2,6 @@ package itc.transforms.elastix;
 
 public class ElastixEulerTransform3D extends ElastixEulerTransform {
 
-
 	public double[] getRotationAnglesInRadians()
 	{
 		final double[] angles = { TransformParameters[ 0 ], TransformParameters[ 1 ], TransformParameters[ 2 ] };
