@@ -16,7 +16,7 @@ public class IntervalUtils
 		final double[] calibrations = new double[ interval.numDimensions() ];
 		Arrays.fill( calibrations, calibration);
 
-		return toCalibratedRealInterval( interval, calibrations )
+		return toCalibratedRealInterval( interval, calibrations );
 	}
 
 	public static RealInterval toCalibratedRealInterval(
