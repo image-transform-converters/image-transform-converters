@@ -10,7 +10,7 @@
 
 	<groupId>org.itc</groupId>
 	<artifactId>image-transform-converters</artifactId>
-    <version>0.0.2</version>
+    <version>0.1.00</version>
 
 	<name>Image transform converters</name>
 	<description>A collection of tools for converting between spatial
