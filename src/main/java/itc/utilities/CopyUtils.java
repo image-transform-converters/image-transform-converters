@@ -1,8 +1,11 @@
 package itc.utilities;
 
-import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.*;
+import net.imglib2.algorithm.util.Grids;
+import net.imglib2.img.AbstractImg;
 import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.img.cell.CellImgFactory;
 import net.imglib2.loops.LoopBuilder;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.Type;
@@ -24,5 +27,110 @@ public class CopyUtils
 
 		return copy;
 	}
+
+	public static < R extends RealType< R > & NativeType< R > >
+	RandomAccessibleInterval< R > copyVolumeRaiMultiThreaded( RandomAccessibleInterval< R > volume,
+															  int numThreads )
+	{
+		final int dimensionX = ( int ) volume.dimension( 0 );
+		final int dimensionY = ( int ) volume.dimension( 1 );
+		final int dimensionZ = ( int ) volume.dimension( 2 );
+
+		final long numElements =
+				AbstractImg.numElements( Intervals.dimensionsAsLongArray( volume ) );
+
+		RandomAccessibleInterval< R > copy;
+
+		if ( numElements < Integer.MAX_VALUE - 1 )
+		{
+			copy = new ArrayImgFactory( Util.getTypeFromInterval( volume ) ).create( volume );
+		}
+		else
+		{
+			// TODO: why does below work?
+//			int nz = (int) ( ( Integer.MAX_VALUE - 1 )
+//					/ ( volume.dimension( 0  ) * volume.dimension( 1 ) ) );
+
+			final int[] cellSize = {
+					dimensionX,
+					dimensionY,
+					dimensionZ };
+
+			copy = new CellImgFactory( Util.getTypeFromInterval( volume ), cellSize ).create( volume );
+		}
+
+		final int[] blockSize = {
+				dimensionX,
+				dimensionY,
+				( int ) Math.ceil( dimensionZ / numThreads ) };
+
+		Grids.collectAllContainedIntervals(
+				Intervals.dimensionsAsLongArray( volume ) , blockSize )
+				.parallelStream().forEach(
+				interval -> copy( volume, Views.interval( copy, interval )));
+
+		return copy;
+	}
+
+	public static < R extends RealType< R > & NativeType< R > >
+	RandomAccessibleInterval< R > copyPlanarRaiMultiThreaded( RandomAccessibleInterval< R > volume,
+															  int numThreads )
+	{
+		final int dimensionX = ( int ) volume.dimension( 0 );
+		final int dimensionY = ( int ) volume.dimension( 1 );
+
+		final long numElements =
+				AbstractImg.numElements( Intervals.dimensionsAsLongArray( volume ) );
+
+		RandomAccessibleInterval< R > copy;
+
+		if ( numElements < Integer.MAX_VALUE - 1 )
+		{
+			copy = new ArrayImgFactory( Util.getTypeFromInterval( volume ) ).create( volume );
+		}
+		else
+		{
+			// TODO: test below code
+			final int[] cellSize = {
+					dimensionX,
+					dimensionY };
+
+			copy = new CellImgFactory( Util.getTypeFromInterval( volume ), cellSize ).create( volume );
+		}
+
+		final int[] blockSize = {
+				dimensionX,
+				( int ) Math.ceil( dimensionY / numThreads ) };
+
+		Grids.collectAllContainedIntervals(
+				Intervals.dimensionsAsLongArray( volume ) , blockSize )
+				.parallelStream().forEach(
+				interval -> copy( volume, Views.interval( copy, interval )));
+
+		return copy;
+	}
+
+	private static < T extends Type< T > > void copy( final RandomAccessible< T > source,
+													 final IterableInterval< T > target )
+	{
+		// create a cursor that automatically localizes itself on every move
+		Cursor< T > targetCursor = target.localizingCursor();
+		RandomAccess< T > sourceRandomAccess = source.randomAccess();
+
+		// iterate over the input cursor
+		while ( targetCursor.hasNext() )
+		{
+			// move input cursor forward
+			targetCursor.fwd();
+
+			// set the output cursor to the position of the input cursor
+			sourceRandomAccess.setPosition( targetCursor );
+
+			// set the value of this pixel of the output image, every Type supports T.set( T type )
+			targetCursor.get().set( sourceRandomAccess.get() );
+		}
+
+	}
+
 
 }

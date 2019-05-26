@@ -1,5 +1,6 @@
 package itc.utilities;
 
+import mpicbg.spim.data.sequence.VoxelDimensions;
 import net.imglib2.FinalRealInterval;
 import net.imglib2.Interval;
 import net.imglib2.RealInterval;
@@ -11,17 +12,17 @@ public class IntervalUtils
 {
 	public static RealInterval toCalibratedRealInterval(
 			Interval interval,
-			double calibration )
+			double voxelSpacing )
 	{
 		final double[] calibrations = new double[ interval.numDimensions() ];
-		Arrays.fill( calibrations, calibration);
+		Arrays.fill( calibrations, voxelSpacing);
 
 		return toCalibratedRealInterval( interval, calibrations );
 	}
 
 	public static RealInterval toCalibratedRealInterval(
 			Interval interval,
-			double[] calibrations )
+			double[] voxelSpacings )
 	{
 		final double[] min = Intervals.minAsDoubleArray( interval );
 		final double[] max = Intervals.maxAsDoubleArray( interval );
@@ -29,13 +30,29 @@ public class IntervalUtils
 		final int numDimensions = min.length;
 		for ( int d = 0; d < numDimensions; d++ )
 		{
-			min[ d ] *= calibrations[ d ];
-			max[ d ] *= calibrations[ d ];
+			min[ d ] *= voxelSpacings[ d ];
+			max[ d ] *= voxelSpacings[ d ];
 		}
 
 		return new FinalRealInterval( min, max );
 	}
 
+	public static RealInterval toCalibratedRealInterval(
+			Interval interval,
+			VoxelDimensions voxelDimensions )
+	{
+		final double[] min = Intervals.minAsDoubleArray( interval );
+		final double[] max = Intervals.maxAsDoubleArray( interval );
+
+		final int numDimensions = min.length;
+		for ( int d = 0; d < numDimensions; d++ )
+		{
+			min[ d ] *= voxelDimensions.dimension( d );
+			max[ d ] *= voxelDimensions.dimension( d );
+		}
+
+		return new FinalRealInterval( min, max );
+	}
 
 	public static RealInterval scale(
 			RealInterval realInterval,
