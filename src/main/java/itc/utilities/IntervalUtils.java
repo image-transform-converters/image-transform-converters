@@ -81,4 +81,35 @@ public class IntervalUtils
 		return new FinalRealInterval( min, max );
 	}
 
+	public static String toString( RealInterval realInterval )
+	{
+		int n = realInterval.numDimensions();
+		double[] min = Intervals.minAsDoubleArray( realInterval );
+		double[] max = Intervals.maxAsDoubleArray( realInterval );
+
+		final StringBuilder sb = new StringBuilder();
+
+		final String className = realInterval.getClass().getSimpleName();
+//		sb.append( className );
+
+		sb.append( " (" );
+		for ( int d = 0; d < n; d++ )
+		{
+			sb.append( min[ d ] );
+			if ( d < n - 1 )
+				sb.append( ", " );
+		}
+		sb.append( ") -- (" );
+		for ( int d = 0; d < n; d++ )
+		{
+			sb.append( max[ d ] );
+			if ( d < n - 1 )
+				sb.append( ", " );
+		}
+		sb.append( ")" );
+
+		return sb.toString();
+	}
+
+
 }
