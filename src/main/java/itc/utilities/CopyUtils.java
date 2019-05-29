@@ -47,14 +47,13 @@ public class CopyUtils
 		}
 		else
 		{
-			// TODO: why does below work?
-//			int nz = (int) ( ( Integer.MAX_VALUE - 1 )
-//					/ ( volume.dimension( 0  ) * volume.dimension( 1 ) ) );
+			int cellSizeZ = (int) ( ( Integer.MAX_VALUE - 1 )
+					/ ( volume.dimension( 0  ) * volume.dimension( 1 ) ) );
 
 			final int[] cellSize = {
 					dimensionX,
 					dimensionY,
-					dimensionZ };
+					cellSizeZ };
 
 			copy = new CellImgFactory( Util.getTypeFromInterval( volume ), cellSize ).create( volume );
 		}

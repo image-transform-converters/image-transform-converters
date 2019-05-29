@@ -8,6 +8,8 @@ import net.imglib2.util.Intervals;
 
 import java.util.Arrays;
 
+import static net.imglib2.util.LinAlgHelpers.rows;
+
 public class IntervalUtils
 {
 	public static RealInterval toCalibratedRealInterval(
@@ -110,6 +112,5 @@ public class IntervalUtils
 
 		return sb.toString();
 	}
-
 
 }
