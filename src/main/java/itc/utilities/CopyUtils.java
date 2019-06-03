@@ -61,7 +61,7 @@ public class CopyUtils
 		final int[] blockSize = {
 				dimensionX,
 				dimensionY,
-				( int ) Math.ceil( dimensionZ / numThreads ) };
+				( int ) Math.ceil( 1.0 * dimensionZ / numThreads ) };
 
 		Grids.collectAllContainedIntervals(
 				Intervals.dimensionsAsLongArray( volume ) , blockSize )
