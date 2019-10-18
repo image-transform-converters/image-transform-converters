@@ -12,6 +12,7 @@ import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 import org.apache.commons.math3.geometry.euclidean.threed.RotationConvention;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
+import java.util.Arrays;
 import java.util.stream.DoubleStream;
 
 public class TransformUtils {
@@ -39,6 +40,30 @@ public class TransformUtils {
 		xfm.apply(pt, max);
 
 		return new FinalRealInterval(min, max);
+	}
+
+
+	/**
+	 * For example, if the transform is in micrometer units,
+	 * but one needs it in millimeter units, one can use
+	 * this function with scale = new double[]{ 0.001, 0.001, 0.001 }
+	 *
+	 * @param transform
+	 * @param scale
+	 * @return
+	 */
+	public static AffineTransform3D scaleAffineTransform3DUnits(
+			AffineTransform3D transform,
+			double[] scale )
+	{
+		AffineTransform3D scaledTransform = transform.copy();
+
+		final double[] inverse = Arrays.stream( scale ).map( x -> 1.0 / x ).toArray();
+
+		scaledTransform = scaledTransform.concatenate( new Scale( inverse ) );
+		scaledTransform = scaledTransform.preConcatenate( new Scale( scale ) );
+
+		return scaledTransform;
 	}
 
 	public static FinalInterval transformRealIntervalExpand(

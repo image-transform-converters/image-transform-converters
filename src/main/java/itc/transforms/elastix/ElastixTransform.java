@@ -18,13 +18,16 @@ public class ElastixTransform {
     public static final String TRANSLATION_TRANSFORM = "TranslationTransform";
     public static final String SPLINE_KERNEL_TRANSFORM = "SplineKernelTransform";
 
-    public static final String FINAL_LINEAR_INTERPOLATOR = "FinalLinearInterpolator";
-
     public static final String DEFAULT_RESAMPLER = "DefaultResampler";
 
     public static final String RESULT_IMAGE_FORMAT_MHD = "mhd";
 
     public static final String RESULT_IMAGE_PIXEL_TYPE_UNSIGNED_CHAR = "unsigned char";
+    public static final String RESULT_IMAGE_PIXEL_TYPE_UNSIGNED_SHORT = "unsigned short";
+
+    public static final String FINAL_LINEAR_INTERPOLATOR = "FinalLinearInterpolator";
+    public static final String FINAL_NEAREST_NEIGHBOR_INTERPOLATOR = "FinalNearestNeighborInterpolator";
+
 
     // TODO : in the toString method, put the field Transform at the first line
     @Parameter
@@ -87,6 +90,7 @@ public class ElastixTransform {
      * @return String representation of the ElastixTransform object
      */
     public String toString() {
+
         String str = "";
         Field[] fields = this.getClass().getFields();
         try {

@@ -38,7 +38,7 @@ public class AmiraEulerToElastixAffineFile
 		final ElastixAffineTransform3D elastixAffineTransform3D
 				= affineTransform3DToElastixAffine3D.convert( inverse );
 
-		elastixAffineTransform3D.save( "/Users/tischer/Desktop/transform.txt" );
+		elastixAffineTransform3D.save( "/Users/tischer/Desktop/elastix-affine-transform.txt" );
 
 
 	}
