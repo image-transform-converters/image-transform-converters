@@ -38,7 +38,6 @@ public class ElastixEuler3DToAffineTransform3D
 		final double[] rotationCenterInMillimeters = elastixEulerTransform3D.getRotationCenterInMillimeters();
 		final double[] translationInMillimeters = elastixEulerTransform3D.getTranslationInMillimeters();
 
-
 		// convert
 		//
 		final double[] rotationCentrePositive = new double[ 3 ];
@@ -49,7 +48,6 @@ public class ElastixEuler3DToAffineTransform3D
 			rotationCentrePositive[ d ] = rotationCenterInMillimeters[ d ];
 			rotationCentreNegative[ d ] = - rotationCenterInMillimeters[ d ];
 		}
-
 
 		final AffineTransform3D transform3D = new AffineTransform3D();
 

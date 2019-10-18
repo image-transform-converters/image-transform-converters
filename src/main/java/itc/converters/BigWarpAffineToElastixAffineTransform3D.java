@@ -9,11 +9,10 @@ import static itc.utilities.Units.*;
 
 public class BigWarpAffineToElastixAffineTransform3D
 {
-
 	public ElastixAffineTransform3D convert(
 			AffineTransform3D bigWarpAffine,
-			Double[] targetImageVoxelSpacingsInMillimeter,
-			Integer[] targetImageDimensionsInPixels,
+			Double[] targetImageVoxelSpacingMillimeter,
+			Integer[] targetImageDimensionsPixels,
 			int targetImageBitDepth,
 			String interpolator,
 			String affineTransformUnit )
@@ -23,8 +22,8 @@ public class BigWarpAffineToElastixAffineTransform3D
 		final AffineTransform3DToElastixAffine3D converter = new AffineTransform3DToElastixAffine3D(
 				interpolator,
 				resultImagePixelType,
-				targetImageVoxelSpacingsInMillimeter,
-				targetImageDimensionsInPixels
+				targetImageVoxelSpacingMillimeter,
+				targetImageDimensionsPixels
 		);
 
 		// convert big warp affine transform to elastix

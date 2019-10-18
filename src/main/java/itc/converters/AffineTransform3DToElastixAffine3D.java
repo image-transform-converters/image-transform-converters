@@ -46,7 +46,6 @@ public class AffineTransform3DToElastixAffine3D
 
 	private static void setOtherParameters( ElastixAffineTransform3D elastixAffineTransform3D )
 	{
-
 		elastixAffineTransform3D.Transform = ElastixTransform.AFFINE_TRANSFORM;
 		elastixAffineTransform3D.FixedImageDimension = 3;
 		elastixAffineTransform3D.MovingImageDimension = 3;

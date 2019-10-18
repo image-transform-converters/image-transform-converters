@@ -23,7 +23,6 @@ public class ElastixAffine3DToAffineTransform3D
 	 */
 	public static AffineTransform3D convert( ElastixAffineTransform3D elastixAffineTransform3D )
 	{
-
 		// fetch values from elastix transform
 		//
 		final double[][] matrix = elastixAffineTransform3D.getMatrix();
@@ -41,7 +40,6 @@ public class ElastixAffine3DToAffineTransform3D
 			rotationCentrePositive[ d ] = rotationCenterInMillimeters[ d ];
 			rotationCentreNegative[ d ] = - rotationCenterInMillimeters[ d ];
 		}
-
 
 		final AffineTransform3D transform3D = new AffineTransform3D();
 
