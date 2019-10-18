@@ -36,7 +36,6 @@
 		</repository>
 	</distributionManagement>
 
-
   	<repositories>
 		<repository>
 			<id>imagej.public</id>
@@ -63,10 +62,10 @@
 	</issueManagement>
 
 	<properties>
+		<package-name>itc</package-name>
 		<license.licenseName>bsd_2</license.licenseName>
 		<license.copyrightOwners>John Bogovic, Nicolas Chiaruttini, and Christian Tischer</license.copyrightOwners>
 		<license.projectName>image-transform-converters</license.projectName>
-
         <enforcer.skip>true</enforcer.skip>
 	</properties>
 	
@@ -79,11 +78,11 @@
 			  <groupId>org.apache.commons</groupId>
 			  <artifactId>commons-math3</artifactId>
 		  </dependency>
-		  <dependency>
-			  <groupId>org.scijava</groupId>
-			  <artifactId>scijava-common</artifactId>
-			  <scope>test</scope>
-		  </dependency>
+<!--		  <dependency>-->
+<!--			  <groupId>org.scijava</groupId>-->
+<!--			  <artifactId>scijava-common</artifactId>-->
+<!--			  <scope>test</scope>-->
+<!--		  </dependency>-->
 		  <dependency>
 			<groupId>net.imglib2</groupId>
 			<artifactId>imglib2-ij</artifactId>
