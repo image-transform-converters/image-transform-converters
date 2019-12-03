@@ -1,0 +1,20 @@
+#!/bin/bash
+
+echo "comparing transformix and itc implementation"
+
+tp=$(readlink -f ../test/resources/elastix/TransformParameters.BSpline3D.txt)
+echo $tp
+pts="bsplinePointSamples.txt"
+
+echo "apply with transformix"
+transformix -def $pts -out `pwd` -tp $tp
+cat outputpoints.txt | sed -e 's/.*OutputPoint = \[ //g' -e 's/\].*$//g' > transformixOutputPtsClean.txt
+
+echo "apply with imglib2"
+jgo.sh org.itc:image-transform-converters:0.1.1:itc.demos.TransformPoints $tp `pwd`/$pts > imglib2TransformResults.txt
+
+echo "computing distances"
+python dist.py transformixOutputPtsClean.txt imglib2TransformResults.txt > distances.txt
+
+maxerr=$(awk -v i="1" 'NR==1{max = $i + 0; next} {if($i > max) max=$i} END {print max}' distances.txt)
+echo "maximum distance: $maxerr"
