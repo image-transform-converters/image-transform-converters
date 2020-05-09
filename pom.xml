@@ -70,35 +70,34 @@
 	</properties>
 	
     <dependencies>
-		  <dependency>
+		<dependency>
 			<groupId>net.imglib2</groupId>
 			<artifactId>imglib2-realtransform</artifactId>
-		  </dependency>
-		  <dependency>
-			  <groupId>org.apache.commons</groupId>
-			  <artifactId>commons-math3</artifactId>
-		  </dependency>
-<!--		  <dependency>-->
-<!--			  <groupId>org.scijava</groupId>-->
-<!--			  <artifactId>scijava-common</artifactId>-->
-<!--			  <scope>test</scope>-->
-<!--		  </dependency>-->
-		  <dependency>
+		</dependency>
+		<dependency>
+		  	<groupId>org.apache.commons</groupId>
+		  	<artifactId>commons-math3</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>net.imglib2</groupId>
 			<artifactId>imglib2-ij</artifactId>
-		  </dependency>
-		  <dependency>
+			</dependency>
+		<dependency>
 			<groupId>sc.fiji</groupId>
 			<artifactId>bigdataviewer-vistools</artifactId>
-		  </dependency>
-		  <dependency>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
-		  </dependency>
-		  <dependency>
-			  <groupId>org.scijava</groupId>
-			  <artifactId>scijava-common</artifactId>
-		  </dependency>
+		</dependency>
+		<dependency>
+			<groupId>org.scijava</groupId>
+			<artifactId>scijava-common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ome</groupId>
+			<artifactId>formats-gpl</artifactId>
+		</dependency>
 	</dependencies>
 </project>
