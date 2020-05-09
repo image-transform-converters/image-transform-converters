@@ -17,7 +17,7 @@ import org.scijava.plugin.Plugin;
 
 import java.io.File;
 
-@Plugin(type = Command.class, menuPath = "Plugins>Registration>Elastix>Utils>Big Warp Affine to Transformix File" )
+@Plugin(type = Command.class, menuPath = "Plugins>Registration>Elastix>Utils>Big Warp Affine Transform to Transformix File" )
 public class BigWarpAffineToTransformixFileCommand implements Command
 {
 	public static final String MILLIMETER = "millimeter";
