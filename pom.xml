@@ -5,12 +5,12 @@
   	<parent>
   		<groupId>org.scijava</groupId>
   		<artifactId>pom-scijava</artifactId>
-  		<version>27.0.1</version>
+  		<version>29.0.0-beta-3</version>
   	</parent>
 
 	<groupId>org.itc</groupId>
 	<artifactId>image-transform-converters</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2-SNAPSHOT</version>
 
 	<name>Image transform converters</name>
 	<description>A collection of tools for converting between spatial
@@ -28,25 +28,37 @@
 		</license>
 	</licenses>
 
-	<distributionManagement>
-		<repository>
-			<id>bintray-image-transform-converters-image-transform-converters</id>
-			<name>image-transform-converters-image-transform-converters</name>
-			<url>https://api.bintray.com/maven/image-transform-converters/image-transform-converters/image-transform-converters/;publish=1</url>
-		</repository>
-	</distributionManagement>
+  	<developers>
+  		<developer>
+  			<name>Christian Tischer</name>
+  			<id>tischi</id>
+  		</developer>
+  		<developer>
+  			<name>Nicolas Chiaruttini</name>
+  			<id>nicokiaru</id>
+  		</developer>
+  		<developer>
+  			<name>John Bogovic</name>
+  			<id>bogovicj</id>
+  		</developer>
+  	</developers>
+  	<contributors>
+  		<contributor>
+  			<name>None</name>
+  		</contributor>
+  	</contributors>
 
   	<repositories>
 		<repository>
-			<id>imagej.public</id>
-			<url>https://maven.imagej.net/content/groups/public</url>
+			<id>scijava.public</id>
+			<url>https://maven.scijava.org/content/groups/public</url>
 	  	</repository>
   	</repositories>
 
 	<mailingLists>
 		<mailingList>
-			<name>ImageJ Forum</name>
-			<archive>http://forum.imagej.net/</archive>
+			<name>Image.sc Forum</name>
+			<archive>http://forum.image.sc/</archive>
 		</mailingList>
 	</mailingLists>
 
@@ -60,13 +72,16 @@
 		<system>GitHub Issues</system>
 		<url>https://github.com/image-transform-converters/image-transform-converters/issues</url>
 	</issueManagement>
+	<ciManagement>
+		<system>Travis CI</system>
+		<url>https://travis-ci.com/image-transform-converters/image-transform-converters</url>
+	</ciManagement>
 
 	<properties>
 		<package-name>itc</package-name>
 		<license.licenseName>bsd_2</license.licenseName>
 		<license.copyrightOwners>John Bogovic, Nicolas Chiaruttini, and Christian Tischer</license.copyrightOwners>
 		<license.projectName>image-transform-converters</license.projectName>
-        <enforcer.skip>true</enforcer.skip>
 	</properties>
 	
     <dependencies>
@@ -78,11 +93,6 @@
 			  <groupId>org.apache.commons</groupId>
 			  <artifactId>commons-math3</artifactId>
 		  </dependency>
-<!--		  <dependency>-->
-<!--			  <groupId>org.scijava</groupId>-->
-<!--			  <artifactId>scijava-common</artifactId>-->
-<!--			  <scope>test</scope>-->
-<!--		  </dependency>-->
 		  <dependency>
 			<groupId>net.imglib2</groupId>
 			<artifactId>imglib2-ij</artifactId>
