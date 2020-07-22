@@ -86,29 +86,48 @@
 	
     <dependencies>
 		  <dependency>
-			<groupId>net.imglib2</groupId>
-			<artifactId>imglib2-realtransform</artifactId>
+			  <groupId>org.scijava</groupId>
+			  <artifactId>scijava-common</artifactId>
 		  </dependency>
 		  <dependency>
-			  <groupId>org.apache.commons</groupId>
-			  <artifactId>commons-math3</artifactId>
+			<groupId>net.imagej</groupId>
+			<artifactId>ij</artifactId>
+		  </dependency>
+		  <dependency>
+			<groupId>net.imglib2</groupId>
+			<artifactId>imglib2</artifactId>
+		  </dependency>
+		  <dependency>
+			<groupId>net.imglib2</groupId>
+			<artifactId>imglib2-algorithm</artifactId>
 		  </dependency>
 		  <dependency>
 			<groupId>net.imglib2</groupId>
 			<artifactId>imglib2-ij</artifactId>
 		  </dependency>
 		  <dependency>
+			<groupId>net.imglib2</groupId>
+			<artifactId>imglib2-realtransform</artifactId>
+		  </dependency>
+		  <dependency>
 			<groupId>sc.fiji</groupId>
 			<artifactId>bigdataviewer-vistools</artifactId>
 		  </dependency>
 		  <dependency>
+			<groupId>sc.fiji</groupId>
+			<artifactId>spim_data</artifactId>
+		  </dependency>
+		  <dependency>
+			  <groupId>org.apache.commons</groupId>
+			  <artifactId>commons-math3</artifactId>
+		  </dependency>
+
+		  <!-- Test scope dependencies -->
+
+		  <dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
-		  </dependency>
-		  <dependency>
-			  <groupId>org.scijava</groupId>
-			  <artifactId>scijava-common</artifactId>
 		  </dependency>
 	</dependencies>
 </project>
