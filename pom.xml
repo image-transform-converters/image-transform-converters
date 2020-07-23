@@ -1,21 +1,21 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-  	<parent>
-  		<groupId>org.scijava</groupId>
-  		<artifactId>pom-scijava</artifactId>
-  		<version>27.0.1</version>
+	<parent>
+  <groupId>org.scijava</groupId>
+  <artifactId>pom-scijava</artifactId>
+  <version>29.0.0-beta-3</version>
   	</parent>
 
 	<groupId>org.itc</groupId>
 	<artifactId>image-transform-converters</artifactId>
-    <version>0.1.1</version>
+	<version>0.1.2-SNAPSHOT</version>
 
 	<name>Image transform converters</name>
 	<description>A collection of tools for converting between spatial
         transforms of various parametrizations / formats </description>
-    <url>https://github.com/image-transform-converters</url>
+	<url>https://github.com/image-transform-converters</url>
 	<inceptionYear>2019</inceptionYear>
 	<organization>
 		<name>image-transform-converters</name>
@@ -28,25 +28,30 @@
 		</license>
 	</licenses>
 
-	<distributionManagement>
-		<repository>
-			<id>bintray-image-transform-converters-image-transform-converters</id>
-			<name>image-transform-converters-image-transform-converters</name>
-			<url>https://api.bintray.com/maven/image-transform-converters/image-transform-converters/image-transform-converters/;publish=1</url>
-		</repository>
-	</distributionManagement>
-
-  	<repositories>
-		<repository>
-			<id>imagej.public</id>
-			<url>https://maven.imagej.net/content/groups/public</url>
-	  	</repository>
-  	</repositories>
+	<developers>
+  		<developer>
+  			<name>Christian Tischer</name>
+  			<id>tischi</id>
+  		</developer>
+  		<developer>
+  			<name>Nicolas Chiaruttini</name>
+  			<id>nicokiaru</id>
+  		</developer>
+  		<developer>
+  			<name>John Bogovic</name>
+  			<id>bogovicj</id>
+  		</developer>
+  	</developers>
+	<contributors>
+  		<contributor>
+  			<name>None</name>
+  		</contributor>
+  	</contributors>
 
 	<mailingLists>
 		<mailingList>
-			<name>ImageJ Forum</name>
-			<archive>http://forum.imagej.net/</archive>
+			<name>Image.sc Forum</name>
+			<archive>http://forum.image.sc/</archive>
 		</mailingList>
 	</mailingLists>
 
@@ -60,45 +65,72 @@
 		<system>GitHub Issues</system>
 		<url>https://github.com/image-transform-converters/image-transform-converters/issues</url>
 	</issueManagement>
+	<ciManagement>
+		<system>Travis CI</system>
+		<url>https://travis-ci.com/image-transform-converters/image-transform-converters</url>
+	</ciManagement>
 
 	<properties>
 		<package-name>itc</package-name>
 		<license.licenseName>bsd_2</license.licenseName>
 		<license.copyrightOwners>John Bogovic, Nicolas Chiaruttini, and Christian Tischer</license.copyrightOwners>
 		<license.projectName>image-transform-converters</license.projectName>
-        <enforcer.skip>true</enforcer.skip>
+
+		<!-- NB: Deploy releases to the SciJava Maven repository. -->
+		<releaseProfiles>deploy-to-scijava</releaseProfiles>
 	</properties>
-	
-    <dependencies>
+
+	<dependencies>
+		  <dependency>
+  <groupId>org.scijava</groupId>
+  <artifactId>scijava-common</artifactId>
+		  </dependency>
+		  <dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>ij</artifactId>
+		  </dependency>
 		  <dependency>
 			<groupId>net.imglib2</groupId>
-			<artifactId>imglib2-realtransform</artifactId>
+			<artifactId>imglib2</artifactId>
 		  </dependency>
 		  <dependency>
-			  <groupId>org.apache.commons</groupId>
-			  <artifactId>commons-math3</artifactId>
+			<groupId>net.imglib2</groupId>
+			<artifactId>imglib2-algorithm</artifactId>
 		  </dependency>
-<!--		  <dependency>-->
-<!--			  <groupId>org.scijava</groupId>-->
-<!--			  <artifactId>scijava-common</artifactId>-->
-<!--			  <scope>test</scope>-->
-<!--		  </dependency>-->
 		  <dependency>
 			<groupId>net.imglib2</groupId>
 			<artifactId>imglib2-ij</artifactId>
+		  </dependency>
+		  <dependency>
+			<groupId>net.imglib2</groupId>
+			<artifactId>imglib2-realtransform</artifactId>
 		  </dependency>
 		  <dependency>
 			<groupId>sc.fiji</groupId>
 			<artifactId>bigdataviewer-vistools</artifactId>
 		  </dependency>
 		  <dependency>
+			<groupId>sc.fiji</groupId>
+			<artifactId>spim_data</artifactId>
+		  </dependency>
+		  <dependency>
+  <groupId>org.apache.commons</groupId>
+  <artifactId>commons-math3</artifactId>
+		  </dependency>
+
+		  <!-- Test scope dependencies -->
+
+		  <dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		  </dependency>
-		  <dependency>
-			  <groupId>org.scijava</groupId>
-			  <artifactId>scijava-common</artifactId>
-		  </dependency>
 	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>scijava.public</id>
+			<url>https://maven.scijava.org/content/groups/public</url>
+	  	</repository>
+  	</repositories>
 </project>
