@@ -7,7 +7,6 @@ import net.imglib2.realtransform.AffineTransform3D;
 
 public class AffineTransform3DToElastixAffine3D
 {
-
 	private final String interpolator;
 	private final String resultImagePixelType;
 	private final Double[] resultsImageVoxelSpacingsInMillimeter;
@@ -25,7 +24,7 @@ public class AffineTransform3DToElastixAffine3D
 		this.resultImageDimensionsInPixels = resultImageDimensionsInPixels;
 	}
 
-	public  ElastixAffineTransform3D convert( AffineTransform3D affineTransform3DInMillimeter )
+	public ElastixAffineTransform3D convert( AffineTransform3D affineTransform3DInMillimeter )
 	{
 		final ElastixAffineTransform3D elastixAffineTransform3D =
 				new ElastixAffineTransform3D();

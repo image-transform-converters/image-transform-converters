@@ -108,7 +108,6 @@ public class AmiraEuler3DAndElastixAffine3DToBdvTransform
 		for ( int i = 0; i < 3; i++ )
 			voxelToMillimeter.set( voxelSpacingMillimeter, i , i );
 
-
 		final AffineTransform3D milliToMicrometer = new AffineTransform3D();
 		for ( int i = 0; i < 3; i++ )
 			milliToMicrometer.set( 1000.0, i , i );

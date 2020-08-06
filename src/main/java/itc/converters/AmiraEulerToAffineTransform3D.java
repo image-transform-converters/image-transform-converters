@@ -28,7 +28,6 @@ public class AmiraEulerToAffineTransform3D
 			double[] translationVectorInMicrometer,
 			double[] rotationCenterInMicrometer )
 	{
-
 		// rotate around rotation centre
 		//
 		final Vector3D axis = new Vector3D(
