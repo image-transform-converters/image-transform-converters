@@ -58,7 +58,6 @@
 	<scm>
 		<connection>scm:git:git://github.com/image-transform-converters/image-transform-converters</connection>
 		<developerConnection>scm:git:git@github.com:image-transform-converters/image-transform-converters</developerConnection>
-		<tag>image-transform-converters-0.1.2</tag>
 		<url>https://github.com/image-transform-converters/image-transform-converters</url>
 	</scm>
 	<issueManagement>

@@ -36,10 +36,9 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 public abstract class DiverseConverters
 {
-
 	/**
 	 * Amira allows the user to interactively specify
-	 * an Euler (rotation & translation) transformation.
+	 * an Euler (rotation and translation) transformation.
 	 * The user can read the transformation parameters on the screen.
 	 * The units in Amira could be anything(?),
 	 * but here, currently, micrometer units are required
