@@ -49,7 +49,7 @@ public class ElastixAffineToAffineTransform3D
 	 *
 	 * Note: Elastix transformations are always in millimeter units.
 	 *
-	 * @param affineTransform3D
+	 * @param elastixAffineTransform
 	 * @param voxelSizeInMillimeter
 	 * @return string as it appears in the Transformation.txt output of elastix
 	 */
