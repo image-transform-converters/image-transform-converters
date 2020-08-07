@@ -44,14 +44,16 @@
   	</developers>
 	<contributors>
   		<contributor>
-  			<name>None</name>
+  			<name>Jan Eglinger</name>
+  			<url>https://imagej.net/User:Eglinger</url>
+			<properties><id>imagejan</id></properties>
   		</contributor>
   	</contributors>
 
 	<mailingLists>
 		<mailingList>
 			<name>Image.sc Forum</name>
-			<archive>http://forum.image.sc/</archive>
+			<archive>https://forum.image.sc/</archive>
 		</mailingList>
 	</mailingLists>
 
