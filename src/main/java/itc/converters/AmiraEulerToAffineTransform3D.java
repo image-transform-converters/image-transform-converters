@@ -38,7 +38,7 @@ public class AmiraEulerToAffineTransform3D
 {
 	/**
 	 * Amira allows the user to interactively specify
-	 * an Euler (rotation & translation) transformation.
+	 * an Euler (rotation and translation) transformation.
 	 * The user can read the transformation parameters on the screen.
 	 * The units in Amira could be anything(?),
 	 * but here, currently, micrometer units are required
