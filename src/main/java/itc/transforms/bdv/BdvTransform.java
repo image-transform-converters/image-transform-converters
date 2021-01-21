@@ -55,7 +55,6 @@ import java.util.regex.Pattern;
  */
 public class BdvTransform
 {
-
 	public static final String BDV_DELIM = " ";
 
 	public final AffineTransform3D affineTransform3D;

@@ -156,8 +156,5 @@ public class CopyUtils
 			// set the value of this pixel of the output image, every Type supports T.set( T type )
 			targetCursor.get().set( sourceRandomAccess.get() );
 		}
-
 	}
-
-
 }

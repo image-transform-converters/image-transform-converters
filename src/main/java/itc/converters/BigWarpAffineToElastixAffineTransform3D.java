@@ -29,7 +29,7 @@
 package itc.converters;
 
 import itc.transforms.elastix.ElastixAffineTransform3D;
-import itc.transforms.elastix.ElastixTransform;
+import itc.utilities.ElastixUtils;
 import itc.utilities.TransformUtils;
 import net.imglib2.realtransform.AffineTransform3D;
 
@@ -45,7 +45,7 @@ public class BigWarpAffineToElastixAffineTransform3D
 			String interpolator,
 			String affineTransformUnit )
 	{
-		final String resultImagePixelType = getPixelTypeString( targetImageBitDepth );
+		final String resultImagePixelType = ElastixUtils.getPixelTypeString( targetImageBitDepth );
 
 		final AffineTransform3DToElastixAffine3D converter = new AffineTransform3DToElastixAffine3D(
 				interpolator,
@@ -59,7 +59,6 @@ public class BigWarpAffineToElastixAffineTransform3D
 
 		// the big warp affine transform already is from fixed to moving, thus no inversion is needed
 
-
 		// elastix works in millimeters, thus we need to convert the big warp affine to millimeters
 		if ( affineTransformUnit.equals( MILLIMETER ) )
 			bigWarpAffine = bigWarpAffine;
@@ -70,18 +69,6 @@ public class BigWarpAffineToElastixAffineTransform3D
 
 		// convert and save to file
 		return converter.convert( bigWarpAffine );
-	}
-
-	private String getPixelTypeString( int targetImageBitDepth )
-	{
-		final String resultImagePixelType;
-		if ( targetImageBitDepth == 8 )
-			resultImagePixelType = ElastixTransform.RESULT_IMAGE_PIXEL_TYPE_UNSIGNED_CHAR;
-		else if ( targetImageBitDepth == 16 )
-			resultImagePixelType = "unsigned short"; // TODO: put into itc-transforms
-		else
-			throw new UnsupportedOperationException( "No support for bit depth " + targetImageBitDepth );
-		return resultImagePixelType;
 	}
 
 }
