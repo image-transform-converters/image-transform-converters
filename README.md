@@ -3,9 +3,9 @@
 # image-transform-converters
 Conversion between spatial transformations of various formats / parametrizations
 
-### BigDataViewerAffineTransform 
+### BdvAffineTransform 
 
-aka: BdvAffineTransform; SourceTransform
+aka: SourceTransform
 
 This affine transformation transforms a voxel grid space, typically of a stored image, to a physical space:
 
@@ -19,9 +19,9 @@ You find this transformation usually find in the XML files that are associated w
 ```
 
 
-### BdvViewerAffineTransform 
+### BdvViewerTransform 
 
-aka: BdvViewerTransform, ViewerTransform
+aka: BdvViewerAffineTransform, ViewerTransform
 
 This affine transformation transforms from a physical space to the pixel grid of the BigDataViewer window on your computer monitor :
 ```
@@ -46,7 +46,7 @@ n0.002893965118073776,n0.0,n0.0,n-0.40320376408396347,n0.0,n0.002893965118073776
 
 `Normalised view` is not discussed here as it is a MoBIE feature.
  
-### Bdv: from Bdv window to the Voxel in the image source
+### BigDataViewer: from canvas to voxel in image source
 
 If you have the coordinate of a pixel in the BDV window (`canvasPosition`), you can find the corresponding voxel in an image source like this (imglib2 code):
 
