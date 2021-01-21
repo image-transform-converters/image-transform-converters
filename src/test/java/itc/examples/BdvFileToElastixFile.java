@@ -28,10 +28,7 @@
  */
 package itc.examples;
 
-import itc.converters.BdvTransformToElastixAffine3D;
 import itc.transforms.bdv.BdvTransform;
-import itc.transforms.elastix.ElastixAffineTransform3D;
-import itc.transforms.elastix.ElastixTransform;
 
 import java.io.File;
 import java.io.IOException;

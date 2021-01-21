@@ -31,25 +31,25 @@ package itc.converters;
 import itc.transforms.bdv.BdvTransform;
 import itc.transforms.elastix.ElastixAffineTransform3D;
 import itc.transforms.elastix.ElastixTransform;
+import itc.utilities.ElastixUtils;
 
-public class BdvTransformToElastixAffine3D
+public class BdvAffineToElastixAffineTransform3D
 {
-
 	private final String interpolator;
 	private final String resultImagePixelType;
 	private final Integer[] resultImageDimensions;
 
-	public BdvTransformToElastixAffine3D(
+	public BdvAffineToElastixAffineTransform3D(
 			String interpolator,
-			String resultImagePixelType,
+			int resultImageBitDepth,
 			Integer[] resultImageDimensions )
 	{
 		this.interpolator = interpolator;
-		this.resultImagePixelType = resultImagePixelType;
+		this.resultImagePixelType = ElastixUtils.getPixelTypeString( resultImageBitDepth );
 		this.resultImageDimensions = resultImageDimensions;
 	}
 
-	public  ElastixAffineTransform3D convert( BdvTransform bdvTransform )
+	public ElastixAffineTransform3D convert( BdvTransform bdvTransform )
 	{
 		final ElastixAffineTransform3D elastixAffineTransform3D =
 				new ElastixAffineTransform3D();
@@ -59,8 +59,7 @@ public class BdvTransformToElastixAffine3D
 
 		elastixAffineTransform3D.Size = resultImageDimensions;
 		elastixAffineTransform3D.ResampleInterpolator = interpolator;
-		elastixAffineTransform3D.ResultImageFormat =
-				ElastixTransform.RESULT_IMAGE_FORMAT_MHD;
+		elastixAffineTransform3D.ResultImageFormat = ElastixTransform.RESULT_IMAGE_FORMAT_MHD;
 		elastixAffineTransform3D.ResultImagePixelType = resultImagePixelType;
 
 		setOtherParameters( elastixAffineTransform3D );
@@ -71,7 +70,6 @@ public class BdvTransformToElastixAffine3D
 	private static void setOtherParameters(
 			ElastixAffineTransform3D elastixAffineTransform3D )
 	{
-
 		elastixAffineTransform3D.Transform = ElastixTransform.AFFINE_TRANSFORM;
 		elastixAffineTransform3D.FixedImageDimension = 3;
 		elastixAffineTransform3D.MovingImageDimension = 3;

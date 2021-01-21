@@ -40,4 +40,24 @@ public class ParsingUtils
 
 		return nums;
 	}
+
+	public static int[] delimitedStringToIntegerArray( String s, String delimiter )
+	{
+		String[] strings = s.split(delimiter);
+		int[] nums = new int[strings.length];
+		for (int i = 0; i < nums.length; i++) {
+			nums[i] = Integer.parseInt(strings[i]);
+		}
+		return nums;
+	}
+
+	public static long[] delimitedStringToLongArray( String s, String delimiter )
+	{
+		String[] strings = s.split(delimiter);
+		long[] nums = new long[strings.length];
+		for (int i = 0; i < nums.length; i++) {
+			nums[i] = Long.parseLong(strings[i]);
+		}
+		return nums;
+	}
 }
