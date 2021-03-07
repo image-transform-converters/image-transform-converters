@@ -37,7 +37,7 @@ public class ElastixTransformLoadAndSaveToFile {
     public static void main( String[] args ) throws IOException
     {
         final ElastixTransform elastixTransform = ElastixTransform.load(
-                new File( ElastixLoadAffineFromFile.class.getResource(
+                new File( ElastixLoadTests.class.getResource(
                         "/elastix/TransformParameters.Affine3D.txt" ).getFile() ) );
 
         System.out.println("Output the elastix file as a String ");

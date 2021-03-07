@@ -53,10 +53,9 @@ public class ElastixEuler2DToAffineTransform2D
     {
         // fetch values from elastix transform
         //
-        final double angle = elastixEulerTransform2D.getRotationAngleInRadians();
+        final double angle = elastixEulerTransform2D.getRotationAnglesInRadians()[2]; // Gets Z axis rotation
         final double[] rotationCenterInMillimeters = elastixEulerTransform2D.getRotationCenterInMillimeters();
         final double[] translationInMillimeters = elastixEulerTransform2D.getTranslationInMillimeters();
-
 
         // convert
         //

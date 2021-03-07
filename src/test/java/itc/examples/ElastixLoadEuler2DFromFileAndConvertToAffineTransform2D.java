@@ -42,7 +42,7 @@ public class ElastixLoadEuler2DFromFileAndConvertToAffineTransform2D
     {
         final ElastixTransform elastixTransform = ElastixTransform.load(
                 new File( ElastixLoadEulerFromFileAndConvertToAffineTransform3D.class.getResource(
-                        "/elastix/TransformParameters.0.txt" ).getFile() ) );
+                        "/elastix/TransformParameters.Euler2D.txt" ).getFile() ) );
 
         if ( elastixTransform instanceof ElastixEulerTransform2D)
         {

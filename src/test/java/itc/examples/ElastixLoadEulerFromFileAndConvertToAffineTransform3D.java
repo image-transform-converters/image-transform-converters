@@ -39,6 +39,8 @@ public class ElastixLoadEulerFromFileAndConvertToAffineTransform3D
 {
 	public static void main( String[] args ) throws IOException
 	{
+		// TODO : find an example Euler3D transform This main does not work
+		// TO FIX
 		final ElastixTransform elastixTransform = ElastixTransform.load(
 				new File( ElastixLoadEulerFromFileAndConvertToAffineTransform3D.class.getResource(
 						"/elastix/TransformParameters.Euler2D.txt" ).getFile() ) );
