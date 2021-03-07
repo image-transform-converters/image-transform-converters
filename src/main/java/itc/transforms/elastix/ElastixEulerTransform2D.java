@@ -28,5 +28,29 @@
  */
 package itc.transforms.elastix;
 
+/**
+ * For 2D transform, the transformation is extended to 3D space assuming:
+ * - the rotation occurs along the Z axis,
+ * - and Z coordinates are set to 0 by default
+ */
+
 public class ElastixEulerTransform2D extends ElastixEulerTransform {
+
+    public double[] getRotationAnglesInRadians()
+    {
+        final double[] rotation = {0,0,TransformParameters[ 0 ]}; // Rotation around Z only - returns 0 in both X and Y axis
+        return rotation;
+    }
+
+    public double[] getTranslationInMillimeters()
+    {
+        final double[] translation = { TransformParameters[ 1 ], TransformParameters[ 2 ], 0 }; // 0 in Z coordinate
+        return translation;
+    }
+
+    public double[] getRotationCenterInMillimeters()
+    {
+        final double[] rotationCenter = { CenterOfRotationPoint[ 0 ], CenterOfRotationPoint[ 1 ], 0 }; // 0 in Z coordinate
+        return rotationCenter;
+    }
 }

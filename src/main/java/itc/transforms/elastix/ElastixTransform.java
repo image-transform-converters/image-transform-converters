@@ -361,9 +361,9 @@ public class ElastixTransform {
 
 
     /**
-     * Inner class for file to object conversion of ElaslixTransform objects
+     * Inner class for file to object conversion of ElastixTransform objects
      * @param et current object
-     * @param f field ot be filled
+     * @param f field to be filled
      * @param s string representation of the object
      */
     static void fillField(ElastixTransform et, Field f, String s) {
