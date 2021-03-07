@@ -28,20 +28,39 @@
  */
 package itc.examples;
 
-import itc.transforms.elastix.ElastixTransform;
+import itc.transforms.elastix.*;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
+/**
+ * This class contains tests to check that Elastix Transform files are loaded
+ * and cast to their correct class. No other check is done.
+ *
+ * Class to be tested :
+ *     - {@link ElastixEulerTransform2D}
+ *     - {@link ElastixEulerTransform3D} // TODO!!
+ *     - {@link ElastixSimilarityTransform2D} // TODO !!
+ *     - {@link ElastixSimilarityTransform3D}
+ *     - {@link ElastixAffineTransform2D}
+ *     - {@link ElastixAffineTransform3D}
+ *     - {@link ElastixBSplineTransform2D}
+ *     - {@link ElastixBSplineTransform3D}
+ *
+ * @author Nicolas Chiaruttini
+ */
 
 public class ElastixLoadTests {
 
     public static void main( String[] args )
     {
         ArrayList<String> fName = new ArrayList<>();
-        fName.add("TransformParameters.0.txt");
-        fName.add("TransformParameters.1.txt");
-        fName.add("TransformParameters.2.txt");
+        fName.add("TransformParameters.Euler2D.Sequence0.txt");
+        fName.add("TransformParameters.Affine2D.Sequence1.txt");
+        fName.add("TransformParameters.BSpline2D.Sequence2.txt");
 
         fName.add("TransformParameters.Affine3D.txt");
         fName.add("TransformParameters.BSpline3D.txt");
@@ -63,4 +82,93 @@ public class ElastixLoadTests {
             }
         });
     }
+
+    public static ElastixTransform getElastixTransformFromTestResources(String fileName) throws Exception {
+        return ElastixTransform.load(
+                new File( ElastixLoadEulerFromFile.class.getResource(
+                        "/elastix/"+fileName ).getFile() )
+        );
+    }
+
+    @Test
+    public void testLoadElastixEuler2DClass() throws Exception {
+        Assert.assertEquals(
+                getElastixTransformFromTestResources(
+                        "TransformParameters.Euler2D.Sequence0.txt"
+                ).getClass(),
+                ElastixEulerTransform2D.class);
+
+        Assert.assertEquals(
+                getElastixTransformFromTestResources(
+                        "TransformParameters.Euler2D.txt"
+                ).getClass(),
+                ElastixEulerTransform2D.class);
+    }
+
+    // TODO : put an example of ElastixEuler3D transform in the test resources
+    /*@Test
+    public void testLoadElastixEuler3DClass() throws Exception {
+        Assert.assertEquals(
+                getElastixTransformFromTestResources(
+                ??
+                ).getClass(),
+                ElastixEulerTransform2D.class);
+    }*/
+
+
+    // TODO : put an example of Similarity2D transform in the test resources
+    /*@Test
+    public void testLoadElastixSimilarity2DClass() throws Exception {
+        Assert.assertEquals(
+                getElastixTransformFromTestResources(
+                        ??
+                ).getClass(),
+                ElastixBSplineTransform2D.class);
+    }*/
+
+    @Test
+    public void testLoadElastixSimilarity3DClass() throws Exception {
+        Assert.assertEquals(
+                getElastixTransformFromTestResources(
+                        "TransformParameters.Similarity3D.txt"
+                ).getClass(),
+                ElastixSimilarityTransform3D.class);
+    }
+
+    @Test
+    public void testLoadElastixAffine2DClass() throws Exception {
+        Assert.assertEquals(
+                getElastixTransformFromTestResources(
+                        "TransformParameters.Affine2D.Sequence1.txt"
+                ).getClass(),
+                ElastixAffineTransform2D.class);
+    }
+
+    @Test
+    public void testLoadElastixAffine3DClass() throws Exception {
+        Assert.assertEquals(
+                getElastixTransformFromTestResources(
+                        "TransformParameters.Affine3D.txt"
+                ).getClass(),
+                ElastixAffineTransform3D.class);
+    }
+
+    @Test
+    public void testLoadElastixBSpline2DClass() throws Exception {
+        Assert.assertEquals(
+                getElastixTransformFromTestResources(
+                        "TransformParameters.BSpline2D.Sequence2.txt"
+                ).getClass(),
+                ElastixBSplineTransform2D.class);
+    }
+
+    @Test
+    public void testLoadElastixBSpline3DClass() throws Exception {
+        Assert.assertEquals(
+                getElastixTransformFromTestResources(
+                        "TransformParameters.BSpline3D.txt"
+                ).getClass(),
+                ElastixBSplineTransform3D.class);
+    }
+
 }
