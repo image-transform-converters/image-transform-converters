@@ -26,29 +26,33 @@
  * POSSIBILITY OF SUCH DAMAGE.
  * #L%
  */
-package itc.transforms.elastix;
+package itc.examples;
 
-public class ElastixAffineTransform2D extends ElastixAffineTransform {
+import itc.converters.ElastixAffine2DToAffineTransform2D;
+import itc.transforms.elastix.ElastixAffineTransform2D;
+import itc.transforms.elastix.ElastixTransform;
+import net.imglib2.realtransform.AffineTransform2D;
 
-    public double[][] getMatrix()
+import java.io.File;
+import java.io.IOException;
+
+public class ElastixLoadAffine2DFromFileAndConvertToAffineTransform2D
+{
+    public static void main( String[] args ) throws IOException
     {
-        final double[][] matrix = new double[2][2];
+        final ElastixTransform elastixTransform = ElastixTransform.load(
+                new File( ElastixLoadEulerFromFileAndConvertToAffineTransform3D.class.getResource(
+                        "/elastix/TransformParameters.1.txt" ).getFile() ) );
 
-        matrix[ 0 ] = new double[]{ TransformParameters[ 0 ], TransformParameters[ 1 ]};
-        matrix[ 1 ] = new double[]{ TransformParameters[ 2 ], TransformParameters[ 3 ]};
+        if ( elastixTransform instanceof ElastixAffineTransform2D)
+        {
+            System.out.println( "I am a ElastixAffineTransform2D\n");
+        }
 
-        return matrix;
-    }
+        AffineTransform2D convertedTransform2D = new ElastixAffine2DToAffineTransform2D().convert( ( ElastixAffineTransform2D ) elastixTransform );
 
-    public double[] getTranslationInMillimeters()
-    {
-        final double[] translation = { TransformParameters[ 4 ], TransformParameters[ 5 ]};
-        return translation;
-    }
+        System.out.println( elastixTransform );
+        System.out.println( convertedTransform2D );
 
-    public double[] getRotationCenterInMillimeters()
-    {
-        final double[] rotationCenter = { CenterOfRotationPoint[ 0 ], CenterOfRotationPoint[ 1 ]};
-        return rotationCenter;
     }
 }
