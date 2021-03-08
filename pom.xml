@@ -78,6 +78,7 @@
 		<license.licenseName>bsd_2</license.licenseName>
 		<license.copyrightOwners>John Bogovic, Nicolas Chiaruttini, and Christian Tischer</license.copyrightOwners>
 		<license.projectName>image-transform-converters</license.projectName>
+		<license.excludes>**/resources/**</license.excludes>
 
 		<!-- NB: Deploy releases to the SciJava Maven repository. -->
 		<releaseProfiles>deploy-to-scijava</releaseProfiles>
