@@ -28,10 +28,11 @@
  */
 package itc.converters;
 
-import itc.transforms.elastix.ElastixSimilarityTransform3D;
+import itc.transforms.elastix.ElastixSimilarityTransform2D;
+import net.imglib2.realtransform.AffineTransform2D;
 import net.imglib2.realtransform.AffineTransform3D;
 
-public class ElastixSimilarity3DToAffineTransform3D
+public class ElastixSimilarity2DToAffineTransform3D
 {
 
 	/**
@@ -55,12 +56,13 @@ public class ElastixSimilarity3DToAffineTransform3D
 	 *
 	 * Note: Elastix units are always millimeters
 	 *
-	 * @param elastixSimilarityTransform3D
+	 * @param elastixSimilarityTransform2D
 	 *
 	 * @return an affine transform performing the Euler transform, in millimeter units
 	 */
-	public static AffineTransform3D convert( ElastixSimilarityTransform3D elastixSimilarityTransform3D )
+	public static AffineTransform3D convert(ElastixSimilarityTransform2D elastixSimilarityTransform2D )
 	{
-		throw new UnsupportedOperationException("PR appreciated!");
+		AffineTransform2D transform2D = ElastixSimilarity2DToAffineTransform2D.convert(elastixSimilarityTransform2D);
+		return AffineTransform2DToAffineTransform3D.convert(transform2D);
 	}
 }
