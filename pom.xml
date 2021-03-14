@@ -11,7 +11,7 @@
 
 	<groupId>org.itc</groupId>
 	<artifactId>image-transform-converters</artifactId>
-	<version>0.1.5-SNAPSHOT</version>
+	<version>0.1.6-SNAPSHOT</version>
 
 	<name>Image transform converters</name>
 	<description>A collection of tools for converting between spatial
