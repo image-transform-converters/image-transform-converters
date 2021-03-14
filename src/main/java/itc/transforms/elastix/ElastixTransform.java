@@ -240,8 +240,10 @@ public class ElastixTransform {
 
         switch (m.group(2)) {
             case "\"" + TRANSLATION_TRANSFORM + "\"":
+                file.close();
                 throw new UnsupportedOperationException();
             case "\"" + SPLINE_KERNEL_TRANSFORM + "\"":
+                file.close();
                 throw new UnsupportedOperationException();
             case  "\"" + EULER_TRANSFORM + "\"":
                 out = new ElastixEulerTransform();
@@ -260,6 +262,7 @@ public class ElastixTransform {
                 out.Transform = SIMILARITY_TRANSFORM;
                 break;
             default:
+                file.close();
                 throw new UnsupportedOperationException();
         }
 
@@ -279,6 +282,9 @@ public class ElastixTransform {
                 }
             }
         }
+
+        // Don't forget to close the reader in order to release the file!
+        file.close();
 
         // Casting to 2D or 3D transformation
 
@@ -333,6 +339,7 @@ public class ElastixTransform {
                 System.err.println(out.FixedImageDimension+"D transform unsupported.");
                 throw new UnsupportedOperationException();
         }
+
         return dimensionCastET;
     }
 
