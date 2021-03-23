@@ -29,4 +29,27 @@
 package itc.transforms.elastix;
 
 public class ElastixSimilarityTransform2D extends ElastixSimilarityTransform {
+
+    public double getScalingFactor() {
+        final double scalingFactor = TransformParameters[0];
+        return scalingFactor;
+    }
+
+    public double[] getRotationAnglesInRadians()
+    {
+        final double[] rotation = {0,0,TransformParameters[ 1 ]}; // Rotation around Z only - returns 0 in both X and Y axis
+        return rotation;
+    }
+
+    public double[] getTranslationInMillimeters()
+    {
+        final double[] translation = { TransformParameters[ 2 ], TransformParameters[ 3 ]};
+        return translation;
+    }
+
+    public double[] getRotationCenterInMillimeters()
+    {
+        final double[] rotationCenter = { CenterOfRotationPoint[ 0 ], CenterOfRotationPoint[ 1 ]};
+        return rotationCenter;
+    }
 }

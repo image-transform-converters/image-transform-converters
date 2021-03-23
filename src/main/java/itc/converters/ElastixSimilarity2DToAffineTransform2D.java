@@ -28,6 +28,7 @@
  */
 package itc.converters;
 
+import itc.transforms.elastix.ElastixAffineTransform;
 import itc.transforms.elastix.ElastixSimilarityTransform2D;
 import itc.transforms.elastix.ElastixSimilarityTransform3D;
 import net.imglib2.realtransform.AffineTransform2D;
@@ -63,6 +64,48 @@ public class ElastixSimilarity2DToAffineTransform2D
 	 */
 	public static AffineTransform2D convert(ElastixSimilarityTransform2D elastixSimilarityTransform2D )
 	{
-		throw new UnsupportedOperationException("PR appreciated!");
+		// fetch values from elastix transform
+		//
+		final double angle = elastixSimilarityTransform2D.getRotationAnglesInRadians()[2]; // Gets Z axis rotation
+		final double scalingFactor = elastixSimilarityTransform2D.getScalingFactor();
+		final double[] rotationCenterInMillimeters = elastixSimilarityTransform2D.getRotationCenterInMillimeters();
+		final double[] translationInMillimeters = elastixSimilarityTransform2D.getTranslationInMillimeters();
+
+		// convert
+		//
+		final double[] rotationCentrePositive = new double[ 2 ];
+		final double[] rotationCentreNegative = new double[ 2 ];
+
+		for ( int d = 0; d < 2; ++d )
+		{
+			rotationCentrePositive[ d ] = rotationCenterInMillimeters[ d ];
+			rotationCentreNegative[ d ] = - rotationCenterInMillimeters[ d ];
+		}
+
+		final AffineTransform2D transform2D = new AffineTransform2D();
+
+		// rotate around rotation centre
+		//
+
+		// translate to rotation centre
+		transform2D.translate( rotationCentreNegative );
+
+		// rotate
+		transform2D.rotate( angle );
+
+		// scale isotropically
+		transform2D.scale( scalingFactor );
+
+		// move image centre back
+		final AffineTransform2D translateBackFromRotationCentre = new AffineTransform2D();
+		translateBackFromRotationCentre.translate( rotationCentrePositive );
+		transform2D.preConcatenate( translateBackFromRotationCentre );
+
+		// translate
+		//
+		transform2D.translate( translationInMillimeters );
+
+		return transform2D;
 	}
+
 }
