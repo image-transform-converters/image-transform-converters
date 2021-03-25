@@ -74,7 +74,7 @@ public class ElastixSimilarityTransform3D extends ElastixSimilarityTransform {
         double sinangle2 = getNorm( axis );
         double cosangle2 = sqrt( 1 - sinangle2 * sinangle2);
 
-        double[] unitQuaternion = new double[]{ axis[0], axis[1], axis[2], cosangle2 };
+        double[] unitQuaternion = new double[]{ cosangle2, axis[0], axis[1], axis[2] };
 
         final double[][] matrix = new double[3][3];
         quaternionToR( unitQuaternion, matrix );

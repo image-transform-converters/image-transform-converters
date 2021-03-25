@@ -100,15 +100,14 @@ public class ElastixSimilarity3DToAffineTransform3D
 
 		transform3D.preConcatenate( rotate );
 
+		// scale
+		transform3D.scale( scalingFactor );
+
 		// translate back from rotation centre
 		final AffineTransform3D translateBackFromRotationCentre = new AffineTransform3D();
 		translateBackFromRotationCentre.translate( rotationCentrePositive );
 
 		transform3D.preConcatenate( translateBackFromRotationCentre );
-
-		// TODO - where should scaling go?
-		// scale
-		transform3D.scale( scalingFactor );
 
 		// translate
 		//
