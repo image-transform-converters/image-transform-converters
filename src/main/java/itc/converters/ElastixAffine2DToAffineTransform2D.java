@@ -60,13 +60,13 @@ public class ElastixAffine2DToAffineTransform2D
 
 		// convert
 		//
-		final double[] rotationCentrePositive = new double[ 2 ];
-		final double[] rotationCentreNegative = new double[ 2 ];
+		final double[] rotationCenterPositive = new double[ 2 ];
+		final double[] rotationCenterNegative = new double[ 2 ];
 
 		for ( int d = 0; d < 2; ++d )
 		{
-			rotationCentrePositive[ d ] = rotationCenterInMillimeters[ d ];
-			rotationCentreNegative[ d ] = - rotationCenterInMillimeters[ d ];
+			rotationCenterPositive[ d ] = rotationCenterInMillimeters[ d ];
+			rotationCenterNegative[ d ] = - rotationCenterInMillimeters[ d ];
 		}
 
 		final AffineTransform2D transform2D = new AffineTransform2D();
@@ -74,8 +74,8 @@ public class ElastixAffine2DToAffineTransform2D
 		// rotate and scale
 		//
 
-		// translate to rotation centre
-		transform2D.translate( rotationCentreNegative );
+		// translate to rotation center
+		transform2D.translate( rotationCenterNegative );
 
 		// rotate and scale
 		final AffineTransform2D rotateAndScale = new AffineTransform2D();
@@ -89,11 +89,11 @@ public class ElastixAffine2DToAffineTransform2D
 
 		transform2D.preConcatenate( rotateAndScale );
 
-		// translate back from rotation centre
-		final AffineTransform2D translateBackFromRotationCentre = new AffineTransform2D();
-		translateBackFromRotationCentre.translate( rotationCentrePositive );
+		// translate back from rotation center
+		final AffineTransform2D translateBackFromRotationCenter = new AffineTransform2D();
+		translateBackFromRotationCenter.translate( rotationCenterPositive );
 
-		transform2D.preConcatenate( translateBackFromRotationCentre );
+		transform2D.preConcatenate( translateBackFromRotationCenter );
 
 		// translate
 		//

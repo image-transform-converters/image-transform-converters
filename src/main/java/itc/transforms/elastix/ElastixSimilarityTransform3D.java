@@ -54,8 +54,6 @@ public class ElastixSimilarityTransform3D extends ElastixSimilarityTransform {
         // the scalar part (w) from this
         // based on elastix / itk source code:
         // https://github.com/SuperElastix/elastix/blob/c3a254562d6801f1a34a2de0ec324c10632b5884/Common/Transforms/itkAdvancedSimilarity3DTransform.hxx#L126
-        // https://github.com/InsightSoftwareConsortium/ITK/blob/master/Modules/Core/Common/include/itkVersor.hxx#L444
-        // https://itk.org/Doxygen/html/classitk_1_1Versor.html#a72a0cf968370f95dac5bac84a01f93a0
 
         double[] axis = new double[3];
         axis[0] = TransformParameters[0];
@@ -70,6 +68,9 @@ public class ElastixSimilarityTransform3D extends ElastixSimilarityTransform {
                 axis[i] = axis[i] / (norm + epsilon * norm);
             }
         }
+
+        // https://github.com/InsightSoftwareConsortium/ITK/blob/master/Modules/Core/Common/include/itkVersor.hxx#L444
+        // https://itk.org/Doxygen/html/classitk_1_1Versor.html#a72a0cf968370f95dac5bac84a01f93a0
 
         double sinangle2 = getNorm( axis );
         double cosangle2 = sqrt( 1 - sinangle2 * sinangle2);

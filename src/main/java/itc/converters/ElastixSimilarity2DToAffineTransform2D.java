@@ -73,22 +73,22 @@ public class ElastixSimilarity2DToAffineTransform2D
 
 		// convert
 		//
-		final double[] rotationCentrePositive = new double[ 2 ];
-		final double[] rotationCentreNegative = new double[ 2 ];
+		final double[] rotationCenterPositive = new double[ 2 ];
+		final double[] rotationCenterNegative = new double[ 2 ];
 
 		for ( int d = 0; d < 2; ++d )
 		{
-			rotationCentrePositive[ d ] = rotationCenterInMillimeters[ d ];
-			rotationCentreNegative[ d ] = - rotationCenterInMillimeters[ d ];
+			rotationCenterPositive[ d ] = rotationCenterInMillimeters[ d ];
+			rotationCenterNegative[ d ] = - rotationCenterInMillimeters[ d ];
 		}
 
 		final AffineTransform2D transform2D = new AffineTransform2D();
 
-		// rotate around rotation centre
+		// rotate around rotation center
 		//
 
-		// translate to rotation centre
-		transform2D.translate( rotationCentreNegative );
+		// translate to rotation center
+		transform2D.translate( rotationCenterNegative );
 
 		// rotate
 		transform2D.rotate( angle );
@@ -96,10 +96,10 @@ public class ElastixSimilarity2DToAffineTransform2D
 		// scale isotropically
 		transform2D.scale( scalingFactor );
 
-		// move image centre back
-		final AffineTransform2D translateBackFromRotationCentre = new AffineTransform2D();
-		translateBackFromRotationCentre.translate( rotationCentrePositive );
-		transform2D.preConcatenate( translateBackFromRotationCentre );
+		// move image center back
+		final AffineTransform2D translateBackFromRotationCenter = new AffineTransform2D();
+		translateBackFromRotationCenter.translate( rotationCenterPositive );
+		transform2D.preConcatenate( translateBackFromRotationCenter );
 
 		// translate
 		//

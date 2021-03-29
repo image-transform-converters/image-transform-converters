@@ -60,13 +60,13 @@ public class ElastixAffine3DToAffineTransform3D
 
 		// convert
 		//
-		final double[] rotationCentrePositive = new double[ 3 ];
-		final double[] rotationCentreNegative = new double[ 3 ];
+		final double[] rotationCenterPositive = new double[ 3 ];
+		final double[] rotationCenterNegative = new double[ 3 ];
 
 		for ( int d = 0; d < 3; ++d )
 		{
-			rotationCentrePositive[ d ] = rotationCenterInMillimeters[ d ];
-			rotationCentreNegative[ d ] = - rotationCenterInMillimeters[ d ];
+			rotationCenterPositive[ d ] = rotationCenterInMillimeters[ d ];
+			rotationCenterNegative[ d ] = - rotationCenterInMillimeters[ d ];
 		}
 
 		final AffineTransform3D transform3D = new AffineTransform3D();
@@ -74,8 +74,8 @@ public class ElastixAffine3DToAffineTransform3D
 		// rotate and scale
 		//
 
-		// translate to rotation centre
-		transform3D.translate( rotationCentreNegative );
+		// translate to rotation center
+		transform3D.translate( rotationCenterNegative );
 
 		// rotate and scale
 		final AffineTransform3D rotateAndScale = new AffineTransform3D();
@@ -89,11 +89,11 @@ public class ElastixAffine3DToAffineTransform3D
 
 		transform3D.preConcatenate( rotateAndScale );
 
-		// translate back from rotation centre
-		final AffineTransform3D translateBackFromRotationCentre = new AffineTransform3D();
-		translateBackFromRotationCentre.translate( rotationCentrePositive );
+		// translate back from rotation center
+		final AffineTransform3D translateBackFromRotationCenter = new AffineTransform3D();
+		translateBackFromRotationCenter.translate( rotationCenterPositive );
 
-		transform3D.preConcatenate( translateBackFromRotationCentre );
+		transform3D.preConcatenate( translateBackFromRotationCenter );
 
 		// translate
 		//
