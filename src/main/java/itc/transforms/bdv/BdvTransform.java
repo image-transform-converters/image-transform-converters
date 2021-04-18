@@ -1,14 +1,12 @@
 package itc.transforms.bdv;
 
 import itc.transforms.elastix.*;
-import javafx.scene.transform.Affine;
 import net.imglib2.realtransform.AffineTransform3D;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
