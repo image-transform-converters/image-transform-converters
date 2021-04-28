@@ -55,7 +55,6 @@ public class AmiraEuler3DAndElastixEuler3DToBdvTransform
 {
 	public static < R extends RealType< R > > void main( String[] args )  throws IOException
 	{
-
 		/**
 		 * Amira Euler to AffineTransform3D
 		 *
@@ -76,7 +75,6 @@ public class AmiraEuler3DAndElastixEuler3DToBdvTransform
 		 * Elastix Euler to AffineTransform3D
 		 *
 		 */
-
 		final ElastixTransform elastixTransform =
 				ElastixTransform.load(
 					new File( "/Users/tischer/Desktop/elastix-tmp/TransformParameters.0.txt" ) );
@@ -84,12 +82,10 @@ public class AmiraEuler3DAndElastixEuler3DToBdvTransform
 		final AffineTransform3D elastixEulerMillimeter =
 				ElastixEuler3DToAffineTransform3D.convert( ( ElastixEulerTransform3D ) elastixTransform );
 
-
 		/**
 		 * Scaling to voxel size
 		 *
 		 */
-
 		double voxelSpacingMillimeter = 10.0 / 1000000.0; // 0.0005; //
 		final AffineTransform3D voxelToMillimeter = new AffineTransform3D();
 		for ( int i = 0; i < 3; i++ )

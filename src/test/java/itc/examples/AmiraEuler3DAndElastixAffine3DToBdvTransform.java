@@ -114,7 +114,6 @@ public class AmiraEuler3DAndElastixAffine3DToBdvTransform
 		fibSemSource.setColor(
 				new ARGBType( ARGBType.rgba( 255, 0, 0, 255 ) ) );
 
-
 		getCombinedBdvTransform(
 				amiraEulerMillimeter, elastixEulerMillimeter,
 				10.0 / 1000000.0 );
@@ -122,9 +121,6 @@ public class AmiraEuler3DAndElastixAffine3DToBdvTransform
 		getCombinedBdvTransform(
 				amiraEulerMillimeter, elastixEulerMillimeter,
 				20.0 / 1000000.0 );
-
-
-
 	}
 
 	private static AffineTransform3D getCombinedBdvTransform(

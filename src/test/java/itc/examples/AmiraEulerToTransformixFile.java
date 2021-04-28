@@ -28,33 +28,43 @@
  */
 package itc.examples;
 
-import itc.commands.AmiraEulerToTransformixFileFromImageDimensionsCommand;
+import itc.converters.AffineTransform3DToElastixAffine3D;
+import itc.converters.AmiraEulerToAffineTransform3D;
+import itc.transforms.elastix.ElastixAffineTransform3D;
 import itc.transforms.elastix.ElastixTransform;
-
-import java.io.File;
+import net.imglib2.realtransform.AffineTransform3D;
 
 public class AmiraEulerToTransformixFile
 {
 	public static void main( String[] args )
 	{
-		final AmiraEulerToTransformixFileFromImageDimensionsCommand command = new AmiraEulerToTransformixFileFromImageDimensionsCommand();
+		// Manually determined parameters using Amira
+		double[] translationInMicrometer = new double[]{ 147.9, 48.13, 103.0661 };
+		double[] rotationAxis = new double[]{ 0.064, 0.762, 0.643 };
+		double[] rotationCentreInMicrometer = new double[]{ 22.75, 20.0, 36.25 };
+		double rotationAngleInDegrees = 237.0;
 
-		command.inputImageVoxelDimensionsString = "1293, 861, 493";
-		command.inputImageVoxelSpacingMicrometerString = "0.325, 0.325, 0.325";
+		final AffineTransform3D affineTransform3DInMillimeter =
+				AmiraEulerToAffineTransform3D.convert(
+						rotationAxis,
+						rotationAngleInDegrees,
+						translationInMicrometer,
+						rotationCentreInMicrometer );
 
-		command.targetImageVoxelDimensionsString = "687, 648, 713";
-		command.targetImageVoxelSpacingMicrometerString = "0.4, 0.4, 0.4";
+		final AffineTransform3DToElastixAffine3D affineTransform3DToElastixAffine3D
+				= new AffineTransform3DToElastixAffine3D(
+					ElastixTransform.FINAL_LINEAR_INTERPOLATOR,
+					ElastixTransform.RESULT_IMAGE_PIXEL_TYPE_UNSIGNED_CHAR,
+					new Double[]{ 0.0005, 0.0005, 0.0005 },
+					new Integer[]{ 550, 518, 570 }
+		);
 
-		command.targetImageDataTypeString = ElastixTransform.RESULT_IMAGE_PIXEL_TYPE_UNSIGNED_SHORT;
+		// invert, because elastix transform goes from output to input
+		final AffineTransform3D inverse = affineTransform3DInMillimeter.inverse();
 
-		command.translationVectorMicrometerString = "-55.7, 3.44, 54.76";
-		command.rotationAngleDegrees = 77.2;
-		command.rotationAxisUnitVectorString = "-0.199, 0.82, 0.53";
+		final ElastixAffineTransform3D elastixAffineTransform3D
+				= affineTransform3DToElastixAffine3D.convert( inverse );
 
-		command.interpolation = ElastixTransform.FINAL_NEAREST_NEIGHBOR_INTERPOLATOR;
-
-		command.transformationOutputFile = new File( "/Users/tischer/Desktop/TransformParameters.txt");
-
-		command.run();
+		elastixAffineTransform3D.save( "src/test/resources/elastix/TransformParameters.Affine3D.FromAmira.txt" );
 	}
 }

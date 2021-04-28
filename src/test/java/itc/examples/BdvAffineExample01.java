@@ -62,8 +62,6 @@ public class BdvAffineExample01
 
 		final RealRandomAccessible< BitType > translated =
 				RealViews.transform( rraOriginal, translationTransform );
-
-
 	}
 
 	private static RandomAccessibleInterval< BitType > createInputImage(
