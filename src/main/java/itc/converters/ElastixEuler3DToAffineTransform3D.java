@@ -68,31 +68,31 @@ public class ElastixEuler3DToAffineTransform3D
 
 		// convert
 		//
-		final double[] rotationCentrePositive = new double[ 3 ];
-		final double[] rotationCentreNegative = new double[ 3 ];
+		final double[] rotationCenterPositive = new double[ 3 ];
+		final double[] rotationCenterNegative = new double[ 3 ];
 
 		for ( int d = 0; d < 3; ++d )
 		{
-			rotationCentrePositive[ d ] = rotationCenterInMillimeters[ d ];
-			rotationCentreNegative[ d ] = - rotationCenterInMillimeters[ d ];
+			rotationCenterPositive[ d ] = rotationCenterInMillimeters[ d ];
+			rotationCenterNegative[ d ] = - rotationCenterInMillimeters[ d ];
 		}
 
 		final AffineTransform3D transform3D = new AffineTransform3D();
 
-		// rotate around rotation centre
+		// rotate around rotation center
 		//
 
-		// make rotation centre the image centre
-		transform3D.translate( rotationCentreNegative );
+		// make rotation center the image center
+		transform3D.translate( rotationCenterNegative );
 
 		// rotate
 		for ( int d = 0; d < 3; ++d )
 			transform3D.rotate( d, angles[ d ]);
 
-		// move image centre back
-		final AffineTransform3D translateBackFromRotationCentre = new AffineTransform3D();
-		translateBackFromRotationCentre.translate( rotationCentrePositive );
-		transform3D.preConcatenate( translateBackFromRotationCentre );
+		// move image center back
+		final AffineTransform3D translateBackFromRotationCenter = new AffineTransform3D();
+		translateBackFromRotationCenter.translate( rotationCenterPositive );
+		transform3D.preConcatenate( translateBackFromRotationCenter );
 
 		// translate
 		//

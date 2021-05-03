@@ -61,6 +61,58 @@ public class ElastixSimilarity3DToAffineTransform3D
 	 */
 	public static AffineTransform3D convert( ElastixSimilarityTransform3D elastixSimilarityTransform3D )
 	{
-		throw new UnsupportedOperationException("PR appreciated!");
+		// fetch values from elastix transform
+		//
+		final double[][] rotationMatrix = elastixSimilarityTransform3D.getRotationMatrix();
+		final double scalingFactor = elastixSimilarityTransform3D.getScalingFactor();
+		final double[] rotationCenterInMillimeters = elastixSimilarityTransform3D.getRotationCenterInMillimeters();
+		final double[] translationInMillimeters = elastixSimilarityTransform3D.getTranslationInMillimeters();
+
+
+		// convert
+		//
+		final double[] rotationCenterPositive = new double[ 3 ];
+		final double[] rotationCenterNegative = new double[ 3 ];
+
+		for ( int d = 0; d < 3; ++d )
+		{
+			rotationCenterPositive[ d ] = rotationCenterInMillimeters[ d ];
+			rotationCenterNegative[ d ] = - rotationCenterInMillimeters[ d ];
+		}
+
+		final AffineTransform3D transform3D = new AffineTransform3D();
+
+		// rotate and scale
+		//
+
+		// translate to rotation center
+		transform3D.translate( rotationCenterNegative );
+
+		// rotate
+		final AffineTransform3D rotate = new AffineTransform3D();
+		for ( int row = 0; row < 3; row++ )
+		{
+			for ( int col = 0; col < 3; col++ )
+			{
+				rotate.set( rotationMatrix[row][col], row, col );
+			}
+		}
+
+		transform3D.preConcatenate( rotate );
+
+		// scale
+		transform3D.scale( scalingFactor );
+
+		// translate back from rotation center
+		final AffineTransform3D translateBackFromRotationCenter = new AffineTransform3D();
+		translateBackFromRotationCenter.translate( rotationCenterPositive );
+
+		transform3D.preConcatenate( translateBackFromRotationCenter );
+
+		// translate
+		//
+		transform3D.translate( translationInMillimeters );
+
+		return transform3D;
 	}
 }
