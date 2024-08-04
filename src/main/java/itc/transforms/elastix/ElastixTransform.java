@@ -111,6 +111,10 @@ public class ElastixTransform {
     public String ResultImagePixelType;
     @Parameter
     public Boolean CompressResultImage;
+    // Parameter introduced in https://github.com/SuperElastix/elastix/pull/57
+    // Note that a 'true' value won't be supported by this converter
+    @Parameter
+    public Boolean UseBinaryFormatForTransformationParameters;
 
     /**
      * Returns a String representation of the current ElastixTransform object
