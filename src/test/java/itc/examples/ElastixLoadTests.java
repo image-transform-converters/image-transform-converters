@@ -66,6 +66,7 @@ public class ElastixLoadTests {
         fName.add("TransformParameters.BSpline3D.txt");
         fName.add("TransformParameters.Euler2D.txt");
         fName.add("TransformParameters.Similarity3D.txt");
+        fName.add("TransformParameters_from_elastix_5.2.0.Affine.txt");
 
         fName.forEach( fileName -> {
             try {

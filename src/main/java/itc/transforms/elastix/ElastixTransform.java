@@ -115,6 +115,8 @@ public class ElastixTransform {
     // Note that a 'true' value won't be supported by this converter
     @Parameter
     public Boolean UseBinaryFormatForTransformationParameters;
+    @Parameter
+    public String InitialTransformParameterFileName;
 
     /**
      * Returns a String representation of the current ElastixTransform object
@@ -232,50 +234,60 @@ public class ElastixTransform {
         String line;
         String regex = "\\((\\S+)\\s(.+)(\\))";
         Pattern p = Pattern.compile(regex);
+        Matcher m;
+        ElastixTransform out = null;
 
-        ElastixTransform out;
-        // Checks the sort of transform based on the first line of the elastix file
-        String firstLine = file.readLine();
-        // Assert the first line contains the type of transformation
-        Matcher m = p.matcher(firstLine);
-        boolean match = m.matches();
-        assert match;
-        assert m.group(1).equals("Transform");
-
-        switch (m.group(2)) {
-            case "\"" + TRANSLATION_TRANSFORM + "\"":
-                file.close();
-                throw new UnsupportedOperationException();
-            case "\"" + SPLINE_KERNEL_TRANSFORM + "\"":
-                file.close();
-                throw new UnsupportedOperationException();
-            case  "\"" + EULER_TRANSFORM + "\"":
-                out = new ElastixEulerTransform();
-                out.Transform = EULER_TRANSFORM;
-                break;
-            case "\"" + AFFINE_TRANSFORM + "\"":
-                out = new ElastixAffineTransform();
-                out.Transform = AFFINE_TRANSFORM;
-                break;
-            case "\"" + BSPLINE_TRANSFORM + "\"":
-                out = new ElastixBSplineTransform();
-                out.Transform = BSPLINE_TRANSFORM;
-                break;
-            case "\"" + SIMILARITY_TRANSFORM + "\"":
-                out = new ElastixSimilarityTransform();
-                out.Transform = SIMILARITY_TRANSFORM;
-                break;
-            default:
-                file.close();
-                throw new UnsupportedOperationException();
+        // Loops through the file to find the kind of transformation of this file
+        while ((line = file.readLine()) != null) {
+            m = p.matcher(line);
+            if (m.matches()) {
+                if (m.group(1).equals("Transform")) {
+                    switch (m.group(2)) {
+                        case "\"" + TRANSLATION_TRANSFORM + "\"":
+                            file.close();
+                            throw new UnsupportedOperationException();
+                        case "\"" + SPLINE_KERNEL_TRANSFORM + "\"":
+                            file.close();
+                            throw new UnsupportedOperationException();
+                        case  "\"" + EULER_TRANSFORM + "\"":
+                            out = new ElastixEulerTransform();
+                            out.Transform = EULER_TRANSFORM;
+                            break;
+                        case "\"" + AFFINE_TRANSFORM + "\"":
+                            out = new ElastixAffineTransform();
+                            out.Transform = AFFINE_TRANSFORM;
+                            break;
+                        case "\"" + BSPLINE_TRANSFORM + "\"":
+                            out = new ElastixBSplineTransform();
+                            out.Transform = BSPLINE_TRANSFORM;
+                            break;
+                        case "\"" + SIMILARITY_TRANSFORM + "\"":
+                            out = new ElastixSimilarityTransform();
+                            out.Transform = SIMILARITY_TRANSFORM;
+                            break;
+                        default:
+                            file.close();
+                            throw new UnsupportedOperationException("Unrecognized transformation type: "+m.group(2));
+                    }
+                    break;
+                }
+            }
         }
+
+        if (out == null) {
+            throw new UnsupportedOperationException("Could not find the transformation type of the file.");
+        }
+
+        file.close();
+        file = new BufferedReader(new FileReader(f)); // Re-opens the file
+        // Checks the sort of transform based on the 'Transform' line of the elastix file
 
         Class<?> elastixTransformClass = out.getClass();
         Field field;
 
         while ((line = file.readLine()) != null) {
             m = p.matcher(line);
-            if (m.matches()) {
+            if (m.matches()&&(!m.group(1).equals("Transform"))) {
                 try {
                     field = elastixTransformClass.getField(m.group(1));
                     if (field.isAnnotationPresent(Parameter.class)) { // save field only if it is annotated as a Scijava Parameter

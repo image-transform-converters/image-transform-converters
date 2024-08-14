@@ -1,0 +1,28 @@
+// This is a file that was generated with elastix 5.0.2. The transform is not on the first line anymore
+(CenterOfRotationPoint 161.85560364462143 114.32346051292335)
+(Direction 1 0 0 1)
+(FixedImageDimension 2)
+(FixedInternalImagePixelType "float")
+(HowToCombineTransforms "Compose")
+(Index 0 0)
+(InitialTransformParameterFileName "NoInitialTransform")
+(MovingImageDimension 2)
+(MovingInternalImagePixelType "float")
+(NumberOfParameters 6)
+(Origin 0 0)
+(Size 327 229)
+(Spacing 1 1)
+(Transform "AffineTransform")
+(TransformParameters 1.007365842715224 -0.0007108711051427152 -0.001253611752694306 1.0267404273865761 2.002295911573869 0.5068144840205597)
+(UseDirectionCosines "true")
+
+// ResampleInterpolator specific
+(FinalBSplineInterpolationOrder 3)
+(ResampleInterpolator "FinalBSplineInterpolator")
+
+// Resampler specific
+(CompressResultImage "false")
+(DefaultPixelValue 0)
+(Resampler "DefaultResampler")
+(ResultImageFormat "tif")
+(ResultImagePixelType "float")
