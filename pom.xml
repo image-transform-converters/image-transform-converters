@@ -11,7 +11,7 @@
 
 	<groupId>org.itc</groupId>
 	<artifactId>image-transform-converters</artifactId>
-	<version>0.1.10-SNAPSHOT</version>
+	<version>0.1.10</version>
 
 	<name>Image transform converters</name>
 	<description>A collection of tools for converting between spatial
@@ -66,7 +66,7 @@
 		<connection>scm:git:git://github.com/image-transform-converters/image-transform-converters</connection>
 		<developerConnection>scm:git:git@github.com:image-transform-converters/image-transform-converters</developerConnection>
 		<url>https://github.com/image-transform-converters/image-transform-converters</url>
-	  <tag>HEAD</tag>
+	  <tag>image-transform-converters-0.1.10</tag>
    </scm>
 	<issueManagement>
 		<system>GitHub Issues</system>
