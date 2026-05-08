@@ -27,7 +27,6 @@
  * #L%
  */
 package itc.transforms.bdv;
-
 import net.imglib2.realtransform.AffineTransform3D;
 
 import java.io.BufferedReader;
@@ -52,7 +51,6 @@ import java.util.regex.Pattern;
  */
 public class BdvTransform
 {
-
 	public static final String BDV_DELIM = " ";
 
 	public final AffineTransform3D affineTransform3D;
