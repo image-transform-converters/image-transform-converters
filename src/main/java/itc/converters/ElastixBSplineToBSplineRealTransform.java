@@ -6,7 +6,6 @@ import java.util.Arrays;
 import itc.transforms.elastix.ElastixBSplineTransform;
 import itc.transforms.imglib2.BSplineDisplacementField;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.outofbounds.OutOfBoundsConstantValueFactory;
 import net.imglib2.type.numeric.real.DoubleType;
 
 public class ElastixBSplineToBSplineRealTransform
@@ -37,11 +36,8 @@ public class ElastixBSplineToBSplineRealTransform
 			coefficients.add(elastixBSplineTransform.getBSplineCoefficients( i, factor ));
 
 		BSplineDisplacementField<DoubleType> transform = new BSplineDisplacementField<>( 
-				nd, 
-				elastixBSplineTransform.BSplineTransformSplineOrder.intValue(),
+				nd,
 				coefficients,
-				true, 
-				new OutOfBoundsConstantValueFactory<DoubleType, RandomAccessibleInterval<DoubleType>>( new DoubleType( 0 )),
 				Arrays.stream( elastixBSplineTransform.GridSpacing ).mapToDouble( x -> x ).toArray(),
 				Arrays.stream( elastixBSplineTransform.GridOrigin ).mapToDouble( x -> x ).toArray());
 

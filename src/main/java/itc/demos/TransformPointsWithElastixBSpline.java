@@ -26,7 +26,7 @@ public class TransformPointsWithElastixBSpline
 		final ElastixTransform elastixTransform = ElastixTransform.load( new File( bSplineTransformFile ));
 		if( elastixTransform.Transform.equals( "BSplineTransform" ))
 		{
-			transform = ElastixBSplineToBSplineRealTransform.convert( (ElastixBSplineTransform)elastixTransform );
+			transform = ElastixBSplineToBSplineRealTransform.convert( (ElastixBSplineTransform) elastixTransform );
 		}
 		else
 		{
