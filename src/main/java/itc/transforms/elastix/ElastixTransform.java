@@ -1,3 +1,31 @@
+/*-
+ * #%L
+ * image-transform-converters
+ * %%
+ * Copyright (C) 2019 - 2024 John Bogovic, Nicolas Chiaruttini, and Christian Tischer
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * #L%
+ */
 package itc.transforms.elastix;
 
 import org.scijava.plugin.Parameter;
@@ -83,6 +111,12 @@ public class ElastixTransform {
     public String ResultImagePixelType;
     @Parameter
     public Boolean CompressResultImage;
+    // Parameter introduced in https://github.com/SuperElastix/elastix/pull/57
+    // Note that a 'true' value won't be supported by this converter
+    @Parameter
+    public Boolean UseBinaryFormatForTransformationParameters;
+    @Parameter
+    public String InitialTransformParameterFileName;
 
     /**
      * Returns a String representation of the current ElastixTransform object
@@ -200,47 +234,60 @@ public class ElastixTransform {
         String line;
         String regex = "\\((\\S+)\\s(.+)(\\))";
         Pattern p = Pattern.compile(regex);
+        Matcher m;
+        ElastixTransform out = null;
 
-        ElastixTransform out;
-        // Checks the sort of transform based on the first line of the elastix file
-        String firstLine = file.readLine();
-        // Assert the first line contains the type of transformation
-        Matcher m = p.matcher(firstLine);
-        boolean match = m.matches();
-        assert match;
-        assert m.group(1).equals("Transform");
-
-        switch (m.group(2)) {
-            case "\"" + TRANSLATION_TRANSFORM + "\"":
-                throw new UnsupportedOperationException();
-            case "\"" + SPLINE_KERNEL_TRANSFORM + "\"":
-                throw new UnsupportedOperationException();
-            case  "\"" + EULER_TRANSFORM + "\"":
-                out = new ElastixEulerTransform();
-                out.Transform = EULER_TRANSFORM;
-                break;
-            case "\"" + AFFINE_TRANSFORM + "\"":
-                out = new ElastixAffineTransform();
-                out.Transform = AFFINE_TRANSFORM;
-                break;
-            case "\"" + BSPLINE_TRANSFORM + "\"":
-                out = new ElastixBSplineTransform();
-                out.Transform = BSPLINE_TRANSFORM;
-                break;
-            case "\"" + SIMILARITY_TRANSFORM + "\"":
-                out = new ElastixSimilarityTransform();
-                out.Transform = SIMILARITY_TRANSFORM;
-                break;
-            default:
-                throw new UnsupportedOperationException();
+        // Loops through the file to find the kind of transformation of this file
+        while ((line = file.readLine()) != null) {
+            m = p.matcher(line);
+            if (m.matches()) {
+                if (m.group(1).equals("Transform")) {
+                    switch (m.group(2)) {
+                        case "\"" + TRANSLATION_TRANSFORM + "\"":
+                            file.close();
+                            throw new UnsupportedOperationException();
+                        case "\"" + SPLINE_KERNEL_TRANSFORM + "\"":
+                            file.close();
+                            throw new UnsupportedOperationException();
+                        case  "\"" + EULER_TRANSFORM + "\"":
+                            out = new ElastixEulerTransform();
+                            out.Transform = EULER_TRANSFORM;
+                            break;
+                        case "\"" + AFFINE_TRANSFORM + "\"":
+                            out = new ElastixAffineTransform();
+                            out.Transform = AFFINE_TRANSFORM;
+                            break;
+                        case "\"" + BSPLINE_TRANSFORM + "\"":
+                            out = new ElastixBSplineTransform();
+                            out.Transform = BSPLINE_TRANSFORM;
+                            break;
+                        case "\"" + SIMILARITY_TRANSFORM + "\"":
+                            out = new ElastixSimilarityTransform();
+                            out.Transform = SIMILARITY_TRANSFORM;
+                            break;
+                        default:
+                            file.close();
+                            throw new UnsupportedOperationException("Unrecognized transformation type: "+m.group(2));
+                    }
+                    break;
+                }
+            }
         }
+
+        if (out == null) {
+            throw new UnsupportedOperationException("Could not find the transformation type of the file.");
+        }
+
+        file.close();
+        file = new BufferedReader(new FileReader(f)); // Re-opens the file
+        // Checks the sort of transform based on the 'Transform' line of the elastix file
 
         Class<?> elastixTransformClass = out.getClass();
         Field field;
 
         while ((line = file.readLine()) != null) {
             m = p.matcher(line);
-            if (m.matches()) {
+            if (m.matches()&&(!m.group(1).equals("Transform"))) {
                 try {
                     field = elastixTransformClass.getField(m.group(1));
                     if (field.isAnnotationPresent(Parameter.class)) { // save field only if it is annotated as a Scijava Parameter
@@ -251,6 +298,9 @@ public class ElastixTransform {
                 }
             }
         }
+
+        // Don't forget to close the reader in order to release the file!
+        file.close();
 
         // Casting to 2D or 3D transformation
 
@@ -305,6 +355,7 @@ public class ElastixTransform {
                 System.err.println(out.FixedImageDimension+"D transform unsupported.");
                 throw new UnsupportedOperationException();
         }
+
         return dimensionCastET;
     }
 
@@ -333,9 +384,9 @@ public class ElastixTransform {
 
 
     /**
-     * Inner class for file to object conversion of ElaslixTransform objects
+     * Inner class for file to object conversion of ElastixTransform objects
      * @param et current object
-     * @param f field ot be filled
+     * @param f field to be filled
      * @param s string representation of the object
      */
     static void fillField(ElastixTransform et, Field f, String s) {

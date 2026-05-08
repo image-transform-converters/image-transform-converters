@@ -13,7 +13,8 @@ import itc.transforms.elastix.ElastixBSplineTransform;
 import itc.transforms.elastix.ElastixTransform;
 import net.imglib2.realtransform.RealTransform;
 
-public class TransformPoints {
+public class TransformPointsWithElastixBSpline
+{
 
 	public static void main(String[] args) throws UnsupportedOperationException, IOException {
 
