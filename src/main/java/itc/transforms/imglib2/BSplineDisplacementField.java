@@ -5,7 +5,6 @@ import java.util.List;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.RealLocalizable;
 import net.imglib2.RealPositionable;
-import net.imglib2.outofbounds.OutOfBoundsFactory;
 import net.imglib2.realtransform.*;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
@@ -26,6 +25,7 @@ public class BSplineDisplacementField< T extends RealType<T> > implements RealTr
 	private final double[] gridSpacing;
 
 	private final DisplacementFieldTransform dfield;
+	private final RandomAccessibleInterval< T > interleavedCoefficients;
 
 	public BSplineDisplacementField(
 			final int numDimensions,
@@ -35,31 +35,38 @@ public class BSplineDisplacementField< T extends RealType<T> > implements RealTr
 	{
 		assert ( numDimensions == coefficients.size() );
 		this.numDimensions = numDimensions;
-
 		this.gridOffset = gridOffset;
 		this.gridSpacing = gridSpacing;
+		this.interleavedCoefficients = Views.moveAxis( Views.stack( coefficients ), numDimensions, 0 );
+		this.dfield = createDisplacementFieldTransform( interleavedCoefficients, gridSpacing, gridOffset );
+	}
 
-		// Stack coefficient images and move the new stack dimension to 0 so
-		// components are interleaved as required by DisplacementFieldTransform.
-		final RandomAccessibleInterval< T > interleavedCoefficients =
-				Views.moveAxis( Views.stack( coefficients ), numDimensions, 0 );
+	private BSplineDisplacementField(
+			final int numDimensions,
+			final RandomAccessibleInterval< T > interleavedCoefficients,
+			final double[] gridSpacing,
+			final double[] gridOffset )
+	{
+		this.numDimensions = numDimensions;
+		this.gridOffset = gridOffset;
+		this.gridSpacing = gridSpacing;
+		this.interleavedCoefficients = interleavedCoefficients;
+		this.dfield = createDisplacementFieldTransform( interleavedCoefficients, gridSpacing, gridOffset );
+	}
 
-		if( gridSpacing != null && gridOffset != null )
-		{
-			dfield = new DisplacementFieldTransform( interleavedCoefficients, gridSpacing, gridOffset );
-		}
-		else if( gridSpacing != null )
-		{
-			dfield = new DisplacementFieldTransform( interleavedCoefficients, gridSpacing );
-		}
-		else if( gridOffset != null )
-		{
-			dfield = new DisplacementFieldTransform( interleavedCoefficients, new Translation( gridOffset ) );
-		}
+	private static < T extends RealType< T > > DisplacementFieldTransform createDisplacementFieldTransform(
+			final RandomAccessibleInterval< T > interleavedCoefficients,
+			final double[] gridSpacing,
+			final double[] gridOffset )
+	{
+		if ( gridSpacing != null && gridOffset != null )
+			return new DisplacementFieldTransform( interleavedCoefficients, gridSpacing, gridOffset );
+		else if ( gridSpacing != null )
+			return new DisplacementFieldTransform( interleavedCoefficients, gridSpacing );
+		else if ( gridOffset != null )
+			return new DisplacementFieldTransform( interleavedCoefficients, new Translation( gridOffset ) );
 		else
-		{
-			dfield = new DisplacementFieldTransform( interleavedCoefficients );
-		}
+			return new DisplacementFieldTransform( interleavedCoefficients );
 	}
 
 	public BSplineDisplacementField(
@@ -69,6 +76,7 @@ public class BSplineDisplacementField< T extends RealType<T> > implements RealTr
 		this.numDimensions = numDimensions;
 		this.gridOffset = null;
 		this.gridSpacing = null;
+		this.interleavedCoefficients = null;
 		this.dfield = dfield;
 	}
 
@@ -99,6 +107,10 @@ public class BSplineDisplacementField< T extends RealType<T> > implements RealTr
 	@Override
 	public RealTransform copy()
 	{
+		if ( interleavedCoefficients != null )
+			return new BSplineDisplacementField<>( numDimensions, interleavedCoefficients, gridSpacing, gridOffset );
+
+		// Fallback for transforms created from an external DisplacementFieldTransform.
 		return new BSplineDisplacementField<>( numDimensions, ( DisplacementFieldTransform ) dfield.copy() );
 	}
 
