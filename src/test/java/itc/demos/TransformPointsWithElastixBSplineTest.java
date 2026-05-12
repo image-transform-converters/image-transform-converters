@@ -40,7 +40,7 @@ public class TransformPointsWithElastixBSplineTest
 		for ( final double[] point : points )
 		{
 			transform.apply( point, target );
-			Assert.assertEquals( point[ 0 ] + 1.0, target[ 0 ], 1e-6 );
+			Assert.assertEquals( point[ 0 ] + 10.0, target[ 0 ], 1e-6 );
 			Assert.assertEquals( point[ 1 ], target[ 1 ], 1e-6 );
 		}
 	}
@@ -66,10 +66,42 @@ public class TransformPointsWithElastixBSplineTest
 		for ( final double[] point : points )
 		{
 			transform.apply( point, target );
-			Assert.assertEquals( point[ 0 ] + 1.0, target[ 0 ], 1e-6 );
+			Assert.assertEquals( point[ 0 ] + 10.0, target[ 0 ], 1e-6 );
 			Assert.assertEquals( point[ 1 ], target[ 1 ], 1e-6 );
 			Assert.assertEquals( point[ 2 ], target[ 2 ], 1e-6 );
 		}
+	}
+
+	@Test
+	public void testTransformixReferencePoint3DFromResources() throws Exception
+	{
+		final URL transformUrl = TransformPointsWithElastixBSplineTest.class
+				.getResource( "/elastix/TransformParameters.BSpline3D.TransformixReference.noInitial.txt" );
+		Assert.assertNotNull( "Transform resource not found", transformUrl );
+
+		final ElastixTransform elastixTransform = ElastixTransform.load( new File( transformUrl.toURI() ) );
+		Assert.assertTrue( elastixTransform instanceof ElastixBSplineTransform3D );
+
+		final RealTransform transform = ElastixBSplineToBSplineRealTransform
+				.convert( ( ElastixBSplineTransform ) elastixTransform );
+		Assert.assertNotNull( "Converted transform should not be null", transform );
+
+		final double[] source = new double[] { 2905.0, 3501.0, 750.0 };
+		final double[] target = new double[ 3 ];
+		transform.apply( source, target );
+
+		// transformix reference deformation:
+		// [ -8.563298, 61.231346, -30.695219 ]
+		final double[] expectedDisp = new double[] { -8.563298, 61.231346, -30.695219 };
+		final double[] actualDisp = new double[] {
+				target[ 0 ] - source[ 0 ],
+				target[ 1 ] - source[ 1 ],
+				target[ 2 ] - source[ 2 ]
+		};
+
+		Assert.assertEquals( expectedDisp[ 0 ], actualDisp[ 0 ], 5.0 );
+		Assert.assertEquals( expectedDisp[ 1 ], actualDisp[ 1 ], 5.0 );
+		Assert.assertEquals( expectedDisp[ 2 ], actualDisp[ 2 ], 5.0 );
 	}
 
 	private static List< double[] > readPointsResource( final String resourcePath, final int dimensions ) throws Exception

@@ -1,41 +1,46 @@
 package itc.converters;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import itc.transforms.elastix.ElastixBSplineTransform;
+import itc.transforms.elastix.ElastixTransform;
 import itc.transforms.imglib2.BSplineDisplacementField;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.real.DoubleType;
 
 public class ElastixBSplineToBSplineRealTransform
 {
+	public static BSplineDisplacementField< DoubleType > loadAndConvert( final File transformParametersFile ) throws IOException
+	{
+		final ElastixTransform elastixTransform = ElastixTransform.load( transformParametersFile );
+		return convert( elastixTransform );
+	}
+
+	public static BSplineDisplacementField< DoubleType > convert( final ElastixTransform elastixTransform )
+	{
+		if ( ! ( elastixTransform instanceof ElastixBSplineTransform ) )
+			throw new UnsupportedOperationException( "Expected BSplineTransform but got: " + elastixTransform.Transform );
+
+		return convert( ( ElastixBSplineTransform ) elastixTransform );
+	}
 
 	public static BSplineDisplacementField<DoubleType> convert( final ElastixBSplineTransform elastixBSplineTransform )
 	{
 		final int nd = elastixBSplineTransform.FixedImageDimension;
-
-		// this factor compensates for the fact that the bspline kernel used by the bspline implementation in
-		// imglib2-algorithm uses normalized kernels and elastix outputs coefficients expecting use of
-		// un-normalized kernels
-
-		// these factors are specific to third-order bsplines
-		final double factor;
-		if( nd == 3 )
-			factor = 1 / ( 6.0 * 6.0 * 6.0 );
-		else if( nd == 2 )
-			factor = 1 / ( 6.0 * 6.0 );
-		else
+		if ( nd != 2 && nd != 3 )
 		{
-			System.err.println( "bspline transforms only implemeneted for 2d or 3d.");
+			System.err.println( "bspline transforms only implemented for 2d or 3d." );
 			return null;
 		}
 
 		ArrayList<RandomAccessibleInterval<DoubleType>> coefficients = new ArrayList<>( nd );
 		for( int i = 0; i < nd; i++ )
-			coefficients.add(elastixBSplineTransform.getBSplineCoefficients( i, factor ));
+			coefficients.add( elastixBSplineTransform.getBSplineCoefficients( i ) );
 
-		BSplineDisplacementField<DoubleType> transform = new BSplineDisplacementField<>( 
+		BSplineDisplacementField<DoubleType> transform = new BSplineDisplacementField<>(
 				nd,
 				coefficients,
 				Arrays.stream( elastixBSplineTransform.GridSpacing ).mapToDouble( x -> x ).toArray(),
