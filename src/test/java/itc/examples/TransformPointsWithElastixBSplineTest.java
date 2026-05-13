@@ -1,4 +1,4 @@
-package itc.demos;
+package itc.examples;
 
 import itc.converters.ElastixBSplineToBSplineRealTransform;
 import itc.transforms.elastix.ElastixBSplineTransform;

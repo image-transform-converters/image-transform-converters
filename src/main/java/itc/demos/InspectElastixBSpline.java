@@ -6,7 +6,6 @@ import ij.measure.Calibration;
 import itc.converters.ElastixBSplineToBSplineRealTransform;
 import itc.transforms.elastix.ElastixBSplineTransform3D;
 import itc.transforms.elastix.ElastixTransform;
-import net.imagej.ImageJ;
 import net.imglib2.RandomAccess;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgs;
@@ -78,11 +77,11 @@ public class InspectElastixBSpline
 		printPointDisplacement( transform, new double[]{ 3034, 3679, 758 } );
 		System.out.println();
 
-//		final Stats stats = new Stats( n, threshold );
-//		sampleGridRecursive( transform, minCoord, maxCoord, samplesPerDim, 0, new int[ n ], stats );
-//
-//		stats.print();
-//		createAndShowDisplacementMagnitudeVolume( transform, minCoord, maxCoord, samplesPerDim, n );
+		final Stats stats = new Stats( n, threshold );
+		sampleGridRecursive( transform, minCoord, maxCoord, samplesPerDim, 0, new int[ n ], stats );
+
+		stats.print();
+		createAndShowDisplacementMagnitudeVolume( transform, minCoord, maxCoord, samplesPerDim, n );
 	}
 
 	private static void printPointDisplacement( final RealTransform transform, final double[] source )

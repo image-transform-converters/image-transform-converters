@@ -22,29 +22,11 @@ public class TransformPointsWithElastixBSpline
 		String pointsFile = args[ 1 ];
 		
 		// read the transform
-		RealTransform transform = null;
-		final ElastixTransform elastixTransform = ElastixTransform.load( new File( bSplineTransformFile ));
-		if( elastixTransform.Transform.equals( "BSplineTransform" ))
-		{
-			transform = ElastixBSplineToBSplineRealTransform.convert( (ElastixBSplineTransform) elastixTransform );
-		}
-		else
-		{
-			System.out.println( "transform " + elastixTransform.Transform + " not supported yet" );
-			return;
-		}
+		final ElastixBSplineTransform elastixTransform = ( ElastixBSplineTransform ) ElastixTransform.load( new File( bSplineTransformFile ));
+		RealTransform transform = ElastixBSplineToBSplineRealTransform.convert( elastixTransform );
 
 		// read the file
-		List< String > lines = null;
-		try
-		{
-			lines = Files.readAllLines( Paths.get( pointsFile ) );
-		}
-		catch ( IOException e )
-		{
-			e.printStackTrace();
-			return;
-		}
+		List< String > lines = Files.readAllLines( Paths.get( pointsFile ) );
 
 		// parse all points, transform, and print to stdout
 		double[] transformedPoint = new double[ transform.numSourceDimensions() ];

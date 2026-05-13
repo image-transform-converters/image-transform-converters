@@ -107,10 +107,6 @@ public class BSplineDisplacementField< T extends RealType<T> > implements RealTr
 	@Override
 	public RealTransform copy()
 	{
-		if ( interleavedCoefficients != null )
-			return new BSplineDisplacementField<>( numDimensions, interleavedCoefficients, gridSpacing, gridOffset );
-
-		// Fallback for transforms created from an external DisplacementFieldTransform.
 		return new BSplineDisplacementField<>( numDimensions, ( DisplacementFieldTransform ) dfield.copy() );
 	}
 
