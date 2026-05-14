@@ -76,7 +76,7 @@ public class TransformPointsWithElastixBSplineTest
 	public void testTransformixReferencePoint3DFromResources() throws Exception
 	{
 		final URL transformUrl = TransformPointsWithElastixBSplineTest.class
-				.getResource( "/elastix/TransformParameters.BSpline3D.TransformixReference.noInitial.txt" );
+				.getResource( "/elastix/TransformParameters.BSpline3D.Test.txt" );
 		Assert.assertNotNull( "Transform resource not found", transformUrl );
 
 		final ElastixTransform elastixTransform = ElastixTransform.load( new File( transformUrl.toURI() ) );
