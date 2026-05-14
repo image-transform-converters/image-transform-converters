@@ -14,7 +14,7 @@ import net.imglib2.type.numeric.real.DoubleType;
 /**
  * Displacement field transform using a custom cubic B-spline evaluator.
  */
-public class BSplineDisplacementFieldCustomBSpline implements RealTransform
+public class ElastixBSplineRealTransform implements RealTransform
 {
 	private static final int CUBIC_ORDER = 3;
 	private static final int CUBIC_SAMPLES = 4;
@@ -28,7 +28,7 @@ public class BSplineDisplacementFieldCustomBSpline implements RealTransform
 	private final long[][] mins;
 	private final long[][] maxs;
 
-	public BSplineDisplacementFieldCustomBSpline(
+	public ElastixBSplineRealTransform(
 			final int numDimensions,
 			final List< RandomAccessibleInterval< DoubleType > > coefficients,
 			final double[] gridSpacing,
@@ -155,7 +155,7 @@ public class BSplineDisplacementFieldCustomBSpline implements RealTransform
 	@Override
 	public RealTransform copy()
 	{
-		return new BSplineDisplacementFieldCustomBSpline(
+		return new ElastixBSplineRealTransform(
 				numDimensions,
 				coefficients,
 				Arrays.copyOf( gridSpacing, gridSpacing.length ),

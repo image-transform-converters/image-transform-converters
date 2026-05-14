@@ -6,7 +6,7 @@ import java.util.List;
 
 import itc.transforms.elastix.ElastixBSplineTransform;
 import itc.transforms.imglib2.BSplineDisplacementField;
-import itc.transforms.imglib2.BSplineDisplacementFieldCustomBSpline;
+import itc.transforms.imglib2.ElastixBSplineRealTransform;
 import itc.transforms.imglib2.BSplineDisplacementFieldImgLib2BSpline;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.realtransform.RealTransform;
@@ -18,12 +18,12 @@ public class ElastixBSplineToBSplineRealTransform
 	{
 		LINEAR,
 		IMGLIB2_BSPLINE,
-		CUSTOM_BSPLINE
+		ELASTIX_BSPLINE
 	}
 
 	public static BSplineDisplacementField< DoubleType > convert( final ElastixBSplineTransform elastixBSplineTransform )
 	{
-		return convertLinear( elastixBSplineTransform );
+		return createLinear( elastixBSplineTransform );
 	}
 
 	public static RealTransform convert( final ElastixBSplineTransform elastixBSplineTransform, final InterpolationMode mode )
@@ -31,23 +31,23 @@ public class ElastixBSplineToBSplineRealTransform
 		switch ( mode )
 		{
 			case LINEAR:
-				return convertLinear( elastixBSplineTransform );
+				return createLinear( elastixBSplineTransform );
 			case IMGLIB2_BSPLINE:
-				return convertImgLib2BSpline( elastixBSplineTransform );
-			case CUSTOM_BSPLINE:
-				return convertCustomBSpline( elastixBSplineTransform );
+				return createImgLib2BSpline( elastixBSplineTransform );
+			case ELASTIX_BSPLINE:
+				return createElastixBSpline( elastixBSplineTransform );
 			default:
 				throw new IllegalArgumentException( "Unsupported interpolation mode: " + mode );
 		}
 	}
 
-	private static BSplineDisplacementField< DoubleType > convertLinear( final ElastixBSplineTransform elastixBSplineTransform )
+	private static BSplineDisplacementField< DoubleType > createLinear( final ElastixBSplineTransform elastixBSplineTransform )
 	{
 		final int nd = elastixBSplineTransform.FixedImageDimension;
 		return new BSplineDisplacementField<>( nd, coefficients( elastixBSplineTransform ), spacing( elastixBSplineTransform ), origin( elastixBSplineTransform ) );
 	}
 
-	private static RealTransform convertImgLib2BSpline( final ElastixBSplineTransform elastixBSplineTransform )
+	private static RealTransform createImgLib2BSpline( final ElastixBSplineTransform elastixBSplineTransform )
 	{
 		final int nd = elastixBSplineTransform.FixedImageDimension;
 		return new BSplineDisplacementFieldImgLib2BSpline(
@@ -59,10 +59,10 @@ public class ElastixBSplineToBSplineRealTransform
 		);
 	}
 
-	private static RealTransform convertCustomBSpline( final ElastixBSplineTransform elastixBSplineTransform )
+	private static RealTransform createElastixBSpline( final ElastixBSplineTransform elastixBSplineTransform )
 	{
 		final int nd = elastixBSplineTransform.FixedImageDimension;
-		return new BSplineDisplacementFieldCustomBSpline(
+		return new ElastixBSplineRealTransform(
 				nd,
 				coefficients( elastixBSplineTransform ),
 				spacing( elastixBSplineTransform ),
