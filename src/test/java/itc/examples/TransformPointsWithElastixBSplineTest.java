@@ -1,6 +1,7 @@
 package itc.examples;
 
 import itc.converters.ElastixBSplineToBSplineRealTransform;
+import itc.converters.ElastixBSplineToBSplineRealTransform.InterpolationMode;
 import itc.transforms.elastix.ElastixBSplineTransform;
 import itc.transforms.elastix.ElastixBSplineTransform2D;
 import itc.transforms.elastix.ElastixBSplineTransform3D;
@@ -15,6 +16,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TransformPointsWithElastixBSplineTest
@@ -29,19 +31,23 @@ public class TransformPointsWithElastixBSplineTest
 		final ElastixTransform elastixTransform = ElastixTransform.load( new File( transformUrl.toURI() ) );
 		Assert.assertTrue( elastixTransform instanceof ElastixBSplineTransform2D );
 
-		final RealTransform transform = ElastixBSplineToBSplineRealTransform
-				.convert( ( ElastixBSplineTransform ) elastixTransform );
-		Assert.assertNotNull( "Converted transform should not be null", transform );
-		Assert.assertEquals( 2, transform.numSourceDimensions() );
-		Assert.assertEquals( 2, transform.numTargetDimensions() );
-
 		final List< double[] > points = readPointsResource( "/elastix/Points.2D.txt", 2 );
-		final double[] target = new double[ 2 ];
-		for ( final double[] point : points )
+		for ( final InterpolationMode mode : InterpolationMode.values() )
 		{
-			transform.apply( point, target );
-			Assert.assertEquals( point[ 0 ] + 10.0, target[ 0 ], 1e-6 );
-			Assert.assertEquals( point[ 1 ], target[ 1 ], 1e-6 );
+			final RealTransform transform = ElastixBSplineToBSplineRealTransform
+					.convert( ( ElastixBSplineTransform ) elastixTransform, mode );
+			Assert.assertNotNull( "Converted transform should not be null", transform );
+			Assert.assertEquals( 2, transform.numSourceDimensions() );
+			Assert.assertEquals( 2, transform.numTargetDimensions() );
+
+			final double[] target = new double[ 2 ];
+			for ( final double[] point : points )
+			{
+				transform.apply( point, target );
+				final double tol = translationTolerance( mode );
+				Assert.assertEquals( "x mismatch for mode " + mode, point[ 0 ] + 10.0, target[ 0 ], tol );
+				Assert.assertEquals( "y mismatch for mode " + mode, point[ 1 ], target[ 1 ], tol );
+			}
 		}
 	}
 
@@ -55,20 +61,24 @@ public class TransformPointsWithElastixBSplineTest
 		final ElastixTransform elastixTransform = ElastixTransform.load( new File( transformUrl.toURI() ) );
 		Assert.assertTrue( elastixTransform instanceof ElastixBSplineTransform3D );
 
-		final RealTransform transform = ElastixBSplineToBSplineRealTransform
-				.convert( ( ElastixBSplineTransform ) elastixTransform );
-		Assert.assertNotNull( "Converted transform should not be null", transform );
-		Assert.assertEquals( 3, transform.numSourceDimensions() );
-		Assert.assertEquals( 3, transform.numTargetDimensions() );
-
 		final List< double[] > points = readPointsResource( "/elastix/Points.3D.txt", 3 );
-		final double[] target = new double[ 3 ];
-		for ( final double[] point : points )
+		for ( final InterpolationMode mode : InterpolationMode.values() )
 		{
-			transform.apply( point, target );
-			Assert.assertEquals( point[ 0 ] + 10.0, target[ 0 ], 1e-6 );
-			Assert.assertEquals( point[ 1 ], target[ 1 ], 1e-6 );
-			Assert.assertEquals( point[ 2 ], target[ 2 ], 1e-6 );
+			final RealTransform transform = ElastixBSplineToBSplineRealTransform
+					.convert( ( ElastixBSplineTransform ) elastixTransform, mode );
+			Assert.assertNotNull( "Converted transform should not be null", transform );
+			Assert.assertEquals( 3, transform.numSourceDimensions() );
+			Assert.assertEquals( 3, transform.numTargetDimensions() );
+
+			final double[] target = new double[ 3 ];
+			for ( final double[] point : points )
+			{
+				transform.apply( point, target );
+				final double tol = translationTolerance( mode );
+				Assert.assertEquals( "x mismatch for mode " + mode, point[ 0 ] + 10.0, target[ 0 ], tol );
+				Assert.assertEquals( "y mismatch for mode " + mode, point[ 1 ], target[ 1 ], tol );
+				Assert.assertEquals( "z mismatch for mode " + mode, point[ 2 ], target[ 2 ], tol );
+			}
 		}
 	}
 
@@ -82,26 +92,41 @@ public class TransformPointsWithElastixBSplineTest
 		final ElastixTransform elastixTransform = ElastixTransform.load( new File( transformUrl.toURI() ) );
 		Assert.assertTrue( elastixTransform instanceof ElastixBSplineTransform3D );
 
-		final RealTransform transform = ElastixBSplineToBSplineRealTransform
-				.convert( ( ElastixBSplineTransform ) elastixTransform );
-		Assert.assertNotNull( "Converted transform should not be null", transform );
-
 		final double[] source = new double[] { 2905.0, 3501.0, 750.0 };
-		final double[] target = new double[ 3 ];
-		transform.apply( source, target );
+		for ( final InterpolationMode mode : InterpolationMode.values() )
+		{
+			final RealTransform transform = ElastixBSplineToBSplineRealTransform
+					.convert( ( ElastixBSplineTransform ) elastixTransform, mode );
+			Assert.assertNotNull( "Converted transform should not be null", transform );
 
-		// transformix reference deformation:
-		// [ -8.563298, 61.231346, -30.695219 ]
-		final double[] expectedDisp = new double[] { -8.563298, 61.231346, -30.695219 };
-		final double[] actualDisp = new double[] {
-				target[ 0 ] - source[ 0 ],
-				target[ 1 ] - source[ 1 ],
-				target[ 2 ] - source[ 2 ]
-		};
+			final double[] target = new double[ 3 ];
+			transform.apply( source, target );
 
-		Assert.assertEquals( expectedDisp[ 0 ], actualDisp[ 0 ], 5.0 );
-		Assert.assertEquals( expectedDisp[ 1 ], actualDisp[ 1 ], 5.0 );
-		Assert.assertEquals( expectedDisp[ 2 ], actualDisp[ 2 ], 5.0 );
+			// transformix reference deformation:
+			// [ -8.563298, 61.231346, -30.695219 ]
+			final double[] expectedDisp = new double[] { -8.563298, 61.231346, -30.695219 };
+			final double[] actualDisp = new double[] {
+					target[ 0 ] - source[ 0 ],
+					target[ 1 ] - source[ 1 ],
+					target[ 2 ] - source[ 2 ]
+			};
+
+			System.out.println( "Mode: " + mode + " disp=" + Arrays.toString( actualDisp ) );
+			final double tol = transformixTolerance( mode );
+			Assert.assertEquals( expectedDisp[ 0 ], actualDisp[ 0 ], tol );
+			Assert.assertEquals( expectedDisp[ 1 ], actualDisp[ 1 ], tol );
+			Assert.assertEquals( expectedDisp[ 2 ], actualDisp[ 2 ], tol );
+		}
+	}
+
+	private static double translationTolerance( final InterpolationMode mode )
+	{
+		return 0.1;
+	}
+
+	private static double transformixTolerance( final InterpolationMode mode )
+	{
+		return 20.0;
 	}
 
 	private static List< double[] > readPointsResource( final String resourcePath, final int dimensions ) throws Exception

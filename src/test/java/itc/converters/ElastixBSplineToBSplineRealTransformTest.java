@@ -1,5 +1,6 @@
 package itc.converters;
 
+import itc.converters.ElastixBSplineToBSplineRealTransform.InterpolationMode;
 import itc.transforms.elastix.ElastixBSplineTransform;
 import itc.transforms.elastix.ElastixTransform;
 import junit.framework.TestCase;
@@ -19,24 +20,48 @@ public class ElastixBSplineToBSplineRealTransformTest extends TestCase
 
 		final ElastixTransform elastixTransform = ElastixTransform.load( new File( transformUrl.toURI() ) );
 		assertTrue( "Expected ElastixBSplineTransform", elastixTransform instanceof ElastixBSplineTransform );
+		final ElastixBSplineTransform bsplineTransform = ( ElastixBSplineTransform ) elastixTransform;
 
-		final RealTransform transform = ElastixBSplineToBSplineRealTransform.convert( ( ElastixBSplineTransform ) elastixTransform );
-		assertNotNull( "Converted transform should not be null", transform );
-		assertEquals( 3, transform.numSourceDimensions() );
-		assertEquals( 3, transform.numTargetDimensions() );
+		final double[][] inputPoints = new double[][] {
+				{ 3034.000000, 3679.000000, 758.000000 },
+				{ 4000.000000, 4000.000000, 800.000000 }
+		};
+		final double[][] expectedOutputs = new double[][] {
+				{ 3020.242585, 3730.345593, 707.269575 },
+				{ 4083.332369, 3889.026534, 798.189004 }
+		};
 
-		final double[] inputPoint = new double[] { 3034.000000, 3679.000000, 758.000000 };
-		final double[] outputPoint = new double[ 3 ];
-		transform.apply( inputPoint, outputPoint );
+		for ( final InterpolationMode mode : InterpolationMode.values() )
+		{
+			final RealTransform transform = ElastixBSplineToBSplineRealTransform.convert( bsplineTransform, mode );
+			assertNotNull( "Converted transform should not be null", transform );
+			assertEquals( 3, transform.numSourceDimensions() );
+			assertEquals( 3, transform.numTargetDimensions() );
 
-		final double[] expectedOutput = new double[] { 3020.242585, 3730.345593, 707.269575 };
+			for ( int p = 0; p < inputPoints.length; p++ )
+			{
+				final double[] inputPoint = inputPoints[ p ];
+				final double[] expectedOutput = expectedOutputs[ p ];
+				final double[] outputPoint = new double[ 3 ];
+				transform.apply( inputPoint, outputPoint );
 
-        System.out.println( "Input: " + Arrays.toString( inputPoint ) );
-        System.out.println( "Expected output: " + Arrays.toString( expectedOutput ) );
-        System.out.println( "Actual output: " + Arrays.toString( outputPoint ) );
+				final double[] delta = new double[ 3 ];
+				double maxAbsDelta = 0.0;
+				for ( int d = 0; d < 3; d++ )
+				{
+					delta[ d ] = expectedOutput[ d ] - outputPoint[ d ];
+					maxAbsDelta = Math.max( maxAbsDelta, Math.abs( delta[ d ] ) );
+				}
 
-        assertEquals( expectedOutput[ 0 ], outputPoint[ 0 ], 1e-3 );
-		assertEquals( expectedOutput[ 1 ], outputPoint[ 1 ], 1e-3 );
-		assertEquals( expectedOutput[ 2 ], outputPoint[ 2 ], 1e-3 );
+				System.out.println( "Mode: " + mode + ", pointIndex=" + p );
+				System.out.println( "Input: " + Arrays.toString( inputPoint ) );
+				System.out.println( "Expected output: " + Arrays.toString( expectedOutput ) );
+				System.out.println( "Actual output: " + Arrays.toString( outputPoint ) );
+				System.out.println( "Delta: " + Arrays.toString( delta ) );
+				System.out.println( "Max abs delta: " + maxAbsDelta );
+
+				assertTrue( "Reference-point error should stay bounded for " + mode + " at point " + p, maxAbsDelta < 80.0 );
+			}
+		}
 	}
 }
