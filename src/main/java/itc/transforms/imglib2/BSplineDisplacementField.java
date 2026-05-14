@@ -5,9 +5,6 @@ import java.util.List;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.RealLocalizable;
 import net.imglib2.RealPositionable;
-import net.imglib2.RealRandomAccessible;
-import net.imglib2.algorithm.interpolation.randomaccess.BSplineCoefficientsInterpolatorFactory;
-import net.imglib2.outofbounds.OutOfBoundsFactory;
 import net.imglib2.realtransform.*;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
@@ -21,8 +18,6 @@ import net.imglib2.view.Views;
  */
 public class BSplineDisplacementField< T extends RealType<T> > implements RealTransform
 {
-	// TODO migrate to imglib2-algorithm or imglib2-realtransform?
-
 	private final int numDimensions;
 
 	private final double[] gridOffset;
@@ -30,57 +25,48 @@ public class BSplineDisplacementField< T extends RealType<T> > implements RealTr
 	private final double[] gridSpacing;
 
 	private final DisplacementFieldTransform dfield;
+	private final RandomAccessibleInterval< T > interleavedCoefficients;
 
-	@SuppressWarnings( "unchecked" )
-	public BSplineDisplacementField( 
-			final int numDimensions, 
-			final int order, 
+	public BSplineDisplacementField(
+			final int numDimensions,
 			final List<RandomAccessibleInterval<T>> coefficients,
-			final boolean clipping,
-			final OutOfBoundsFactory<? extends RealType<?>, ?> oobFactory,
 			final double[] gridSpacing,
 			final double[] gridOffset )
 	{
 		assert ( numDimensions == coefficients.size() );
 		this.numDimensions = numDimensions;
-
 		this.gridOffset = gridOffset;
 		this.gridSpacing = gridSpacing;
+		this.interleavedCoefficients = Views.moveAxis( Views.stack( coefficients ), numDimensions, 0 );
+		this.dfield = createDisplacementFieldTransform( interleavedCoefficients, gridSpacing, gridOffset );
+	}
 
-		@SuppressWarnings( "rawtypes" )
-		RealRandomAccessible[] defAccesses = new RealRandomAccessible[ numDimensions ];
-		for( int i = 0; i < numDimensions; i++ )
-		{
-			AffineGet pixelToPhysical = null;
-			if( gridSpacing != null && gridOffset != null )
-			{
-				pixelToPhysical = new ScaleAndTranslation( gridSpacing, gridOffset );
-			}
-			else if( gridSpacing != null )
-			{
-				pixelToPhysical = new Scale( gridSpacing ); 
-			}
-			else if( gridOffset != null )
-			{
-				pixelToPhysical = new Translation( gridOffset ); 
-			}
+	private BSplineDisplacementField(
+			final int numDimensions,
+			final RandomAccessibleInterval< T > interleavedCoefficients,
+			final double[] gridSpacing,
+			final double[] gridOffset )
+	{
+		this.numDimensions = numDimensions;
+		this.gridOffset = gridOffset;
+		this.gridSpacing = gridSpacing;
+		this.interleavedCoefficients = interleavedCoefficients;
+		this.dfield = createDisplacementFieldTransform( interleavedCoefficients, gridSpacing, gridOffset );
+	}
 
-			BSplineCoefficientsInterpolatorFactory<T,T> interp = new BSplineCoefficientsInterpolatorFactory<>( 
-					 coefficients.get( i ), order, clipping, oobFactory );
-
-			if( pixelToPhysical != null )
-			{
-				defAccesses[ i ] = RealViews.affine( 
-						Views.interpolate( coefficients.get( i ), interp ),
-						pixelToPhysical );
-			}
-			else
-			{
-				defAccesses[ i ] = Views.interpolate( coefficients.get( i ), interp );
-			}
-		}
-
-		dfield = new DisplacementFieldTransform( defAccesses );
+	private static < T extends RealType< T > > DisplacementFieldTransform createDisplacementFieldTransform(
+			final RandomAccessibleInterval< T > interleavedCoefficients,
+			final double[] gridSpacing,
+			final double[] gridOffset )
+	{
+		if ( gridSpacing != null && gridOffset != null )
+			return new DisplacementFieldTransform( interleavedCoefficients, gridSpacing, gridOffset );
+		else if ( gridSpacing != null )
+			return new DisplacementFieldTransform( interleavedCoefficients, gridSpacing );
+		else if ( gridOffset != null )
+			return new DisplacementFieldTransform( interleavedCoefficients, new Translation( gridOffset ) );
+		else
+			return new DisplacementFieldTransform( interleavedCoefficients );
 	}
 
 	public BSplineDisplacementField(
@@ -90,6 +76,7 @@ public class BSplineDisplacementField< T extends RealType<T> > implements RealTr
 		this.numDimensions = numDimensions;
 		this.gridOffset = null;
 		this.gridSpacing = null;
+		this.interleavedCoefficients = null;
 		this.dfield = dfield;
 	}
 
@@ -117,7 +104,6 @@ public class BSplineDisplacementField< T extends RealType<T> > implements RealTr
 		dfield.apply( source, target );
 	}
 
-	@SuppressWarnings( "unchecked" )
 	@Override
 	public RealTransform copy()
 	{
