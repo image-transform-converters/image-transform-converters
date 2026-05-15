@@ -21,9 +21,9 @@ public class ElastixBSplineToBSplineRealTransform
 		ELASTIX_BSPLINE
 	}
 
-	public static BSplineDisplacementField< DoubleType > convert( final ElastixBSplineTransform elastixBSplineTransform )
+	public static RealTransform convert( final ElastixBSplineTransform elastixBSplineTransform )
 	{
-		return createLinear( elastixBSplineTransform );
+		return createElastixBSpline( elastixBSplineTransform );
 	}
 
 	public static RealTransform convert( final ElastixBSplineTransform elastixBSplineTransform, final InterpolationMode mode )
@@ -41,7 +41,7 @@ public class ElastixBSplineToBSplineRealTransform
 		}
 	}
 
-	private static BSplineDisplacementField< DoubleType > createLinear( final ElastixBSplineTransform elastixBSplineTransform )
+	private static RealTransform createLinear( final ElastixBSplineTransform elastixBSplineTransform )
 	{
 		final int nd = elastixBSplineTransform.FixedImageDimension;
 		return new BSplineDisplacementField<>( nd, coefficients( elastixBSplineTransform ), spacing( elastixBSplineTransform ), origin( elastixBSplineTransform ) );

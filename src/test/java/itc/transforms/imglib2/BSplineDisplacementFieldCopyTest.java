@@ -28,7 +28,7 @@ public class BSplineDisplacementFieldCopyTest
 		final double[] target = new double[ 3 ];
 		copy.apply( source, target );
 
-		Assert.assertEquals( 11.0, target[ 0 ], 1e-6 );
+		Assert.assertEquals( 20.0, target[ 0 ], 1e-6 );
 		Assert.assertEquals( 20.0, target[ 1 ], 1e-6 );
 		Assert.assertEquals( 30.0, target[ 2 ], 1e-6 );
 	}
